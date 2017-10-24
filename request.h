@@ -25,7 +25,7 @@ class Request{
             Request *self = (Request *) ptr;
                              // like this pointer
             // jeff todo:
-            // poission dist of transections here
+            // poisson dist of transections here
             // use advanceKrona and repay to generate transections
         }
 
