@@ -8,7 +8,6 @@ class Request;
 
 class Bank{
     public:
-
         Bank(int k){ krona = k; }
 
         void active(){
