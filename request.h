@@ -13,7 +13,8 @@ class Request{
         }
 
         void active(){
-            pthread_create(&threadID , NULL ,
+            pthread_create(
+                    &threadID , NULL ,
                     &Request::running , this);
         }
 

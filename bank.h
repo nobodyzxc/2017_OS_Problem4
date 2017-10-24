@@ -16,6 +16,7 @@ class Bank{
         }
 
         void getPayment(int amount){
+            // protect krona?
             krona += amount;
         }
 
@@ -37,6 +38,7 @@ class Bank{
             // always check the queue
             // handle requests
             // Request has quota and krona member attr
+            // protect krnoa?
         }
 };
 #endif
