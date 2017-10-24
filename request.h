@@ -41,8 +41,8 @@ class Request{
 
         void repay(int amount){
             bank.getPayment(amount);
-            pthread_exit(0);
             delete this;
+            pthread_exit(0);
         }
 };
 
