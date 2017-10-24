@@ -14,6 +14,7 @@ Here's some problems needed to be clarified:
 3.	How many parameters we need in BP?
 
   - For Poisson Process:
+
       P = ( lambda^n * exp^(-lambda) ) / n!
       1.	n (	times happend ) : should be a constant, 1.
       2.	lambda ( can be regonized as average times the event happend in a period T ) : variable.
