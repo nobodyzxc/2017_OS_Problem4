@@ -2,43 +2,30 @@
 #define _BANK_H_
 #include<pthread.h>
 #include<vector>
+#include<unistd.h>
+#include"ui.h"
+#include"iostream"
+//#include"request.h"
 using namespace std;
 
 class Request;
 
 class Bank{
     public:
-        Bank(int k){ krona = k; }
+        Bank(int k);
 
-        void active(){
-            pthread_create(&threadID , NULL ,
-                    &Bank::running , this);
-        }
+        void active();
 
-        void getPayment(int amount){
-            // protect krona?
-            krona += amount;
-        }
+        void reqKrona(Request *req , int amount);
 
-        void reqKrona(Request *req , int amount){
-            // who? todo:
-            // use mutex to protect bank's queue
-            reqQueue.push_back(make_pair(req , amount));
-        }
+        void getPayment(int amount);
 
     private:
         int krona;
         pthread_t threadID;
+        pthread_mutex_t queLock;
         vector<pair<Request* , int> > reqQueue;
 
-        static void *running(void *ptr){
-            Bank *self = (Bank *) ptr;
-                             // like this pointer
-            // meijin todo:
-            // always check the queue
-            // handle requests
-            // Request has quota and krona member attr
-            // protect krnoa?
-        }
+        static void *running(void *ptr);
 };
 #endif

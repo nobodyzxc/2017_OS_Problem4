@@ -2,10 +2,15 @@
 #include <pthread.h>
 #include "bank.h"
 #include "request.h"
+#include "ui.h"
 
 using namespace std;
 
 int main(void){
+    srand(time(NULL));
+    system("clear");
+    printf("\e[?25l");
+    progress(-1 , -1 , -1);
     Bank bank(1000);
     bank.active();
     RequestGenerator reqGen(bank);
