@@ -41,10 +41,6 @@ void Request::advanceKrona(int amount){
 void *Request::running(void *ptr){
     Request *self = (Request *) ptr;
     // ^ like this pointer
-    //
-    // jeff todo:
-    // poisson dist of transections here
-    // use advanceKrona and repay to generate transections
 
     progress(self->idx , self->krona , self->quota);
     while(1){
@@ -53,13 +49,10 @@ void *Request::running(void *ptr){
 #else
         usleep((rand() % 100000) * 3); //request per 1 - 3 secs
 #endif
-        // ^ should be poisson dist
-        // i.e. usleep(poissonDistTime());
         if(self->krona < self->quota){
             int purchase =
                 min(rand() % (self->quota / MIN_QUOTA) + 1 ,
                         self->quota - self->krona);
-            //(rand() % ((self->quota - self->krona))) + 1;
             self->advanceKrona(purchase);
         }
         else break;
@@ -82,14 +75,22 @@ void RequestGenerator::active(int maximum){
 void *RequestGenerator::running(void *ptr){
     RequestGenerator *self = (RequestGenerator *)ptr;
     //^ like this pointer
-    // zxc todo:
-    // auto gen request
-    // here is a naive method
+
+    // jeff todo:
+    // poisson dist of transections here
+    // use advanceKrona and repay to generate transections
+
     srand(time(NULL));
-    for(int i = 0 ; i < self->maxCust ; i++){
+
+    //while(1){
+    for(int i = 0 ;// v if maxCust == 0 , generate forever
+            (!self->maxCust) || i < self->maxCust ; i++){
+
         self->genReq((rand() % INT_QUOTA) + MIN_QUOTA);
                         // rand quota at most 79
         //sleep(3);
+        // ^ should be poisson dist
+        // i.e. usleep(poissonDistTime());
     }
     return ptr;
 }
