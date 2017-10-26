@@ -7,7 +7,7 @@
 #include<vector>
 
 #define MONEY '$' //'#'
-#define EMPTY '-'
+#define EMPTY ' ' //'-'
 #define SCRHI 36
 
 using namespace std;
