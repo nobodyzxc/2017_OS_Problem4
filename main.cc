@@ -4,6 +4,7 @@
 #include "request.h"
 #include "ui.h"
 
+#define CLIENT 25
 using namespace std;
 
 int main(void){
@@ -14,7 +15,8 @@ int main(void){
     Bank bank(1000);
     bank.active();
     RequestGenerator reqGen(bank);
-    reqGen.active(); //auto generate requests
+    bank.setLimitPayment(CLIENT);
+    reqGen.active(CLIENT); //auto generate requests
     while(1){
         //key board input
         int quota;

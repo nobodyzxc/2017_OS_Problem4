@@ -14,7 +14,7 @@ void progress(int row , float cur , float quo){
     }
     pthread_mutex_lock(&mutex);
     //printf("\n|%d| = %f\n" , row , cur);
-    printf("\033[100A\033[%dB" , row % 30);
+    printf("\033[100A\033[%dB" , row % 36);
     char s[101] = "";
     for(int i = 0 ; i < 100 ; i++)
         sprintf(s , "%s%c" , s ,
@@ -33,8 +33,8 @@ void progress(int row , float cur , float quo){
 }
 
 void UIExit(int v){
-    printf("\033[100B\033[3A");
-    printf("The BANK %s\n\n\n" , v ? "went bankrupt ..." : "survived !");
+    printf("\033[100B\033[2A");
+    printf("The BANK %s\n\n" , v ? "went bankrupt ..." : "survived !");
     printf("\e[?25h");
     exit(v);
     return;

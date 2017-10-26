@@ -14,6 +14,8 @@ class Bank{
     public:
         Bank(int k);
 
+        void setLimitPayment(int count);
+
         void active();
 
         void reqKrona(Request *req , int amount);
@@ -22,6 +24,9 @@ class Bank{
 
     private:
         int krona;
+        int initKrona;
+        int limitPayments;
+
         pthread_t threadID;
         pthread_mutex_t queLock;
         pthread_mutex_t krnLock;

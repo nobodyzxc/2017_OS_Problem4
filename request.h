@@ -6,6 +6,10 @@
 #include"bank.h"
 #include"ui.h"
 
+#define MIN_QUOTA 20
+#define INT_QUOTA 50
+#define MAX_QUOTA (MIN_QUOTA + INT_QUOTA - 1)
+
 class Request{
     public:
         bool nextAdvance;
@@ -33,11 +37,14 @@ class RequestGenerator{
     public:
         RequestGenerator(Bank &bnk);
 
-        void active();
+        
+        void active(int maximum);
 
         void genReq(int quo);
 
     private:
+        int curIdx;
+        int maxCust;
         Bank &bank;
         pthread_t threadID;
 

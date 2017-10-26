@@ -38,8 +38,6 @@ void Request::advanceKrona(int amount){
     }
 }
 
-#define LOW_QUOTA 20
-
 void *Request::running(void *ptr){
     Request *self = (Request *) ptr;
     // ^ like this pointer
@@ -59,7 +57,7 @@ void *Request::running(void *ptr){
         // i.e. usleep(poissonDistTime());
         if(self->krona < self->quota){
             int purchase =
-                min(rand() % (self->quota / LOW_QUOTA) + 1 ,
+                min(rand() % (self->quota / MIN_QUOTA) + 1 ,
                         self->quota - self->krona);
             //(rand() % ((self->quota - self->krona))) + 1;
             self->advanceKrona(purchase);
@@ -73,7 +71,9 @@ void *Request::running(void *ptr){
 
 RequestGenerator::RequestGenerator(Bank &bnk) : bank(bnk) {}
 
-void RequestGenerator::active(){
+void RequestGenerator::active(int maximum){
+    maxCust = maximum;
+    curIdx = 1;
     pthread_create(
             &threadID , NULL ,
             &RequestGenerator::running , this);
@@ -87,17 +87,16 @@ void *RequestGenerator::running(void *ptr){
     // here is a naive method
     srand(time(NULL));
     while(1){ // rand quota at most 79
-        self->genReq((rand() % 50) + LOW_QUOTA);
+        self->genReq((rand() % INT_QUOTA) + MIN_QUOTA);
         //sleep(3);
     }
     return ptr;
 }
 
 void RequestGenerator::genReq(int quo){
-    static int count = 1;
-    Request *req = new Request(bank , quo , count);
+    Request *req = new Request(bank , quo , curIdx);
     req->active();
-    count += 1;
-    if(count > 25) pthread_exit(0);
+    curIdx += 1;
+    if(maxCust >= 0 && curIdx > maxCust) pthread_exit(0);
     // ^ at most 25 users
 }
