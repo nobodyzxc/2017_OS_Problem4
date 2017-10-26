@@ -1,6 +1,10 @@
 #include"ui.h"
 #include<cstdlib>
 #include<algorithm>
+#include<cstring>
+#define MONEY '$' //'#'
+#define EMPTY '-'
+
 using namespace std;
 void progress(int row , float cur , float quo){
     static pthread_mutex_t mutex;
@@ -14,7 +18,13 @@ void progress(int row , float cur , float quo){
     char s[101] = "";
     for(int i = 0 ; i < 100 ; i++)
         sprintf(s , "%s%c" , s ,
-                i < (cur / quo) * 100 ? '#' : '.');
+                i < (cur / quo) * 100 ? MONEY : '.');
+
+    if(row > 0 && cur >= quo){
+        for(int i = 0 ; i < strlen(s) ; i++)
+            if(s[i] == '$') s[i] = EMPTY;
+    }
+
     printf("%s| <- %2d(%4d/%4d) %s\n" ,
             s , row ,
             (int)min(cur , quo) , (int)quo ,

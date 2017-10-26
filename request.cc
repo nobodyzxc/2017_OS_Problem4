@@ -4,6 +4,8 @@
 #include"request.h"
 #include"bank.h"
 #include"ui.h"
+#include <thread>
+#include <chrono>
 
 Request::Request(Bank &bnk , int quo , int id) : bank(bnk){
     quota = quo , krona = 0 , idx = id , nextAdvance = true;
@@ -48,7 +50,11 @@ void *Request::running(void *ptr){
 
     progress(self->idx , self->krona , self->quota);
     while(1){
+#ifdef __GXX_EXPERIMENTAL_CXX0X__
+        std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 100) * 3));
+#else
         usleep((rand() % 100000) * 3); //request per 1 - 3 secs
+#endif
         // ^ should be poisson dist
         // i.e. usleep(poissonDistTime());
         if(self->krona < self->quota){
