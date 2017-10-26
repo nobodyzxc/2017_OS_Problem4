@@ -1,14 +1,12 @@
 #ifndef _REQUEST_H_
 #define _REQUEST_H_
-#include<bits/stdc++.h>
-#include<pthread.h>
-#include<unistd.h>
-#include"bank.h"
-#include"ui.h"
+#include <pthread.h>
 
 #define MIN_QUOTA 20
 #define INT_QUOTA 50
 #define MAX_QUOTA (MIN_QUOTA + INT_QUOTA - 1)
+
+class Bank;
 
 class Request{
     public:
@@ -37,16 +35,14 @@ class RequestGenerator{
     public:
         RequestGenerator(Bank &bnk);
 
-        
         void active(int maximum);
 
         void genReq(int quo);
 
     private:
-        int curIdx;
-        int maxCust;
         Bank &bank;
         pthread_t threadID;
+        int curIdx , maxCust;
 
         static void *running(void *ptr);
 };

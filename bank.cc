@@ -1,12 +1,8 @@
-#include<pthread.h>
-#include<vector>
-#include<unistd.h>
-#include"bank.h"
-#include"request.h"
-#include"ui.h"
-#include<iostream>
-using namespace std;
+#include "ui.h"
+#include "bank.h"
+#include "request.h"
 
+using namespace std;
 
 Bank::Bank(int k){
     krona = k;

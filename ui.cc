@@ -1,10 +1,12 @@
-#include"ui.h"
-#include<cstdlib>
-#include<algorithm>
-#include<cstring>
-#include<termios.h>
-#include<map>
-#include<vector>
+#include <map>
+#include <vector>
+#include <cstdlib>
+#include <cstring>
+#include <algorithm>
+#include <unistd.h>
+#include <termios.h>
+
+#include "ui.h"
 
 #define MONEY '$' //'#'
 #define EMPTY ' ' //'-'

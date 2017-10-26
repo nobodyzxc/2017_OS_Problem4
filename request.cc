@@ -1,11 +1,11 @@
-#include<bits/stdc++.h>
-#include<pthread.h>
-#include<unistd.h>
-#include"request.h"
-#include"bank.h"
-#include"ui.h"
 #include <thread>
 #include <chrono>
+
+#include <unistd.h>
+
+#include "ui.h"
+#include "bank.h"
+#include "request.h"
 
 Request::Request(Bank &bnk , int quo , int id) : bank(bnk){
     quota = quo , krona = 0 , idx = id , nextAdvance = true;

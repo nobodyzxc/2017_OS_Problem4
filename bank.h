@@ -1,11 +1,8 @@
 #ifndef _BANK_H_
 #define _BANK_H_
-#include<pthread.h>
-#include<vector>
-#include<unistd.h>
-#include"ui.h"
-#include"iostream"
-//#include"request.h"
+#include <vector>
+#include <pthread.h>
+
 using namespace std;
 
 class Request;
