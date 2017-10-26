@@ -36,7 +36,6 @@ void Bank::getPayment(int amount){
     krona += amount;
     progress(-1 , krona , 1000);
     if(count == 25){
-        sleep(1);
         UIExit(0);
     }
     pthread_mutex_unlock(&krnLock);
@@ -73,7 +72,7 @@ void *Bank::running(void *ptr){
         pthread_mutex_unlock(&(self->queLock));
         if(self->krona < 100){
             progress(-1 , self->krona , 1000);
-            UIExit(0);
+            UIExit(1);
         }
     }
 

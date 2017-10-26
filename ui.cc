@@ -23,7 +23,8 @@ void progress(int row , float cur , float quo){
 }
 
 void UIExit(int v){
-    printf("\033[100B");
+    printf("\033[100B\033[3A");
+    printf("The BANK %s\n\n\n" , v ? "went bankrupt ..." : "survived !");
     printf("\e[?25h");
     exit(v);
 }
