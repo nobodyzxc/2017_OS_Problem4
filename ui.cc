@@ -2,8 +2,11 @@
 #include<cstdlib>
 #include<algorithm>
 #include<cstring>
+#include<termios.h>
+
 #define MONEY '$' //'#'
 #define EMPTY '-'
+
 
 using namespace std;
 void progress(int row , float cur , float quo){
@@ -36,6 +39,12 @@ void UIExit(int v){
     printf("\033[100B\033[2A");
     printf("The BANK %s\n\n" , v ? "went bankrupt ..." : "survived !");
     printf("\e[?25h");
+
+    struct termios t;
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag |= ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
     exit(v);
     return;
 }

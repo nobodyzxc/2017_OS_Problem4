@@ -86,8 +86,9 @@ void *RequestGenerator::running(void *ptr){
     // auto gen request
     // here is a naive method
     srand(time(NULL));
-    while(1){ // rand quota at most 79
+    for(int i = 0 ; i < self->maxCust ; i++){
         self->genReq((rand() % INT_QUOTA) + MIN_QUOTA);
+                        // rand quota at most 79
         //sleep(3);
     }
     return ptr;
@@ -97,6 +98,4 @@ void RequestGenerator::genReq(int quo){
     Request *req = new Request(bank , quo , curIdx);
     req->active();
     curIdx += 1;
-    if(maxCust >= 0 && curIdx > maxCust) pthread_exit(0);
-    // ^ at most 25 users
 }
