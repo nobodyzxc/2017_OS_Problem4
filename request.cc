@@ -16,8 +16,8 @@ void Request::active(){
 }
 
 void Request::addKrona(int amount){
-    // you can set a flag
-    // to check previous req has returned
+    //nextAdvance is the flag
+    //to check whether req has returned
     krona += amount;
     progress(idx , krona , quota);
     if(krona == quota)
@@ -36,17 +36,28 @@ void Request::advanceKrona(int amount){
     }
 }
 
+#define LOW_QUOTA 20
+
 void *Request::running(void *ptr){
     Request *self = (Request *) ptr;
-    // like this pointer
+    // ^ like this pointer
+    //
     // jeff todo:
     // poisson dist of transections here
     // use advanceKrona and repay to generate transections
+
     progress(self->idx , self->krona , self->quota);
     while(1){
-        usleep(rand() % 3000000); //request per 1 - 3 secs
-        if(self->krona < self->quota)
-            self->advanceKrona((rand() % ((self->quota - self->krona))) + 1);
+        usleep((rand() % 100000) * 3); //request per 1 - 3 secs
+        // ^ should be poisson dist
+        // i.e. usleep(poissonDistTime());
+        if(self->krona < self->quota){
+            int purchase =
+                min(rand() % (self->quota / LOW_QUOTA) + 1 ,
+                        self->quota - self->krona);
+            //(rand() % ((self->quota - self->krona))) + 1;
+            self->advanceKrona(purchase);
+        }
         else break;
     }
     progress(self->idx , self->quota + 1 , self->quota);
@@ -63,13 +74,13 @@ void RequestGenerator::active(){
 
 void *RequestGenerator::running(void *ptr){
     RequestGenerator *self = (RequestGenerator *)ptr;
-    //like this pointer
+    //^ like this pointer
     // zxc todo:
     // auto gen request
-    // very naive method
+    // here is a naive method
     srand(time(NULL));
-    while(1){
-        self->genReq((rand() % 20) + 20);
+    while(1){ // rand quota at most 79
+        self->genReq((rand() % 50) + LOW_QUOTA);
         //sleep(3);
     }
 }
@@ -80,4 +91,5 @@ void RequestGenerator::genReq(int quo){
     req->active();
     count += 1;
     if(count > 25) pthread_exit(0);
+    // ^ at most 25 users
 }

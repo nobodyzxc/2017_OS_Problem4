@@ -24,6 +24,7 @@ class Bank{
         int krona;
         pthread_t threadID;
         pthread_mutex_t queLock;
+        pthread_mutex_t krnLock;
         vector<pair<Request* , int> > reqQueue;
 
         static void *running(void *ptr);
