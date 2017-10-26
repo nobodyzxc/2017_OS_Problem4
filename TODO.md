@@ -22,3 +22,4 @@ Here're some problems needed to be clarified:
 
   - For banker:
       1.	Amount of money initialized.
+
