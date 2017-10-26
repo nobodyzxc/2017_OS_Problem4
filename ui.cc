@@ -8,7 +8,7 @@
 
 #define MONEY '$' //'#'
 #define EMPTY '-'
-#define SCRHI 37
+#define SCRHI 36
 
 using namespace std;
 
@@ -56,7 +56,7 @@ void progress(int idx , float cur , float quo){
         row = idx;
     }
 
-    printf("\033[100A\033[%dB" , row + 1);
+    printf("\033[100A\033[%dB" , row >= 0 ? ++row : row);
 
     char s[101] = "";
     for(int i = 0 ; i < 100 ; i++)
@@ -72,14 +72,14 @@ void progress(int idx , float cur , float quo){
     printf("%s| <- %2d(%4d/%4d) %s\n" ,
             s , idx ,
             (int)min(cur , quo) , (int)quo ,
-            row > 0 ? (cur >= quo ? "done!" : "") : "bank");
+            row > 0 ? (cur >= quo ? "done!" : "     ") : "bank");
 
     pthread_mutex_unlock(&mutex);
 }
 
 void UIExit(int v){
-    printf("\033[100B\033[2A");
-    printf("The BANK %s\n\n" , v ? "went bankrupt ..." : "survived !");
+    printf("\033[100B\033[1A");
+    printf("The BANK %s\n" , v ? "went bankrupt ..." : "survived !");
     printf("\e[?25h");
 
     struct termios t;
