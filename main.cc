@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include <pthread.h>
 #include <termios.h>
+#include <signal.h>
 #include "bank.h"
 #include "request.h"
 #include "ui.h"
@@ -9,6 +10,8 @@
 using namespace std;
 
 int main(void){
+
+    signal(SIGINT , UIExit);
     srand(time(NULL));
     system("clear");
     printf("\e[?25l");
@@ -30,9 +33,11 @@ int main(void){
         //key board input
         int quota;
         scanf("%d" , &quota);
-        client++;
-        bank.setLimitPayment(client);
-        reqGen.genReq(quota);
+        if(quota >= MIN_QUOTA && quota){
+            client++;
+            bank.setLimitPayment(client);
+            reqGen.genReq(quota);
+        }
     }
     return 0;
 }
