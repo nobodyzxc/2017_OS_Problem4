@@ -18,7 +18,6 @@ void Request::active(){
 void Request::addKrona(int amount){
     // you can set a flag
     // to check previous req has returned
-    //printf("%d recv %d\n" , idx , amount);
     krona += amount;
     progress(idx , krona , quota);
     if(krona == quota)
@@ -27,15 +26,11 @@ void Request::addKrona(int amount){
 }
 
 void Request::repay(){
-    //printf("cust %d repay %d/%d\n" , idx , krona , quota);
     bank.getPayment(quota);
-    //delete this;
-    //pthread_exit(0);
 }
 
 void Request::advanceKrona(int amount){
     if(nextAdvance){
-        //printf("%d ask for %d\n" , idx , amount);
         nextAdvance = false;
         bank.reqKrona(this , amount);
     }
@@ -55,7 +50,6 @@ void *Request::running(void *ptr){
         else break;
     }
     progress(self->idx , self->quota + 1 , self->quota);
-    //printf("cust %d end\n" , self->idx);
 }
 
 
@@ -82,7 +76,6 @@ void *RequestGenerator::running(void *ptr){
 
 void RequestGenerator::genReq(int quo){
     static int count = 1;
-    //printf("new customer %d(%d)\n" , count , quo);
     Request *req = new Request(bank , quo , count);
     req->active();
     count += 1;

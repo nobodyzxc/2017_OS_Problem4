@@ -29,6 +29,7 @@ void Bank::reqKrona(Request *req , int amount){
 
 void Bank::getPayment(int amount){
     static int count = 0;
+    // protect krona?
     count++;
     krona += amount;
     progress(-1 , krona , 1000);
@@ -36,8 +37,6 @@ void Bank::getPayment(int amount){
         sleep(1);
         UIExit(0);
     }
-    // protect krona?
-    //printf("bank getpay %d\n" , amount);
 }
 
 void *Bank::running(void *ptr){
