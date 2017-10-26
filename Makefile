@@ -1,7 +1,15 @@
+CXX   = g++
+CXXFLAGS = -Wall -std=c++11
+MAIN     = main
+_MAIN    = ${MAIN:%=%.cc}
+SRCS     = request ui bank
+_SRCS    = ${SRCS:%=%.cc}
+_OBJS    = ${SRCS:%=%.o}
+TRGT     = a.exe
+LNKFLGS  = -pthread
+
 all:
-	g++ -std=c++11 -c request.cc ui.cc bank.cc
-	g++ -std=c++11 -o a.exe main.cc request.o bank.o ui.o -pthread
-	#g++ -c request.cc ui.cc bank.cc
-	#g++ -o a.exe main.cc request.o bank.o ui.o -pthread
+	$(CXX) $(CXXFLAGS) -c $(_SRCS)
+	$(CXX) $(CXXFLAGS) -o $(TRGT) $(_MAIN) $(_OBJS) $(LNKFLGS)
 clean:
-	rm a.exe *.o
+	rm $(TRGT) $(_OBJS)

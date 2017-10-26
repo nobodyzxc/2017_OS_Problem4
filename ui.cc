@@ -21,7 +21,7 @@ void progress(int row , float cur , float quo){
                 i < (cur / quo) * 100 ? MONEY : '.');
 
     if(row > 0 && cur >= quo){
-        for(int i = 0 ; i < strlen(s) ; i++)
+        for(int i = 0 ; i < (int)strlen(s) ; i++)
             if(s[i] == '$') s[i] = EMPTY;
     }
 
@@ -37,4 +37,5 @@ void UIExit(int v){
     printf("The BANK %s\n\n\n" , v ? "went bankrupt ..." : "survived !");
     printf("\e[?25h");
     exit(v);
+    return;
 }

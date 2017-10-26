@@ -75,5 +75,5 @@ void *Bank::running(void *ptr){
             UIExit(1);
         }
     }
-
+    return ptr;
 }

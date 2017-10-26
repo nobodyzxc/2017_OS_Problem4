@@ -67,6 +67,7 @@ void *Request::running(void *ptr){
         else break;
     }
     progress(self->idx , self->quota + 1 , self->quota);
+    return ptr;
 }
 
 
@@ -89,6 +90,7 @@ void *RequestGenerator::running(void *ptr){
         self->genReq((rand() % 50) + LOW_QUOTA);
         //sleep(3);
     }
+    return ptr;
 }
 
 void RequestGenerator::genReq(int quo){
