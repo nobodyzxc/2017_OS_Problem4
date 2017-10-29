@@ -3,7 +3,6 @@
 
 #include <unistd.h>
 
-#include "ui.h"
 #include "bank.h"
 #include "request.h"
 
@@ -24,7 +23,7 @@ void Request::active(){
 void Request::addKrona(int amount){
     //nextAdvance is the flag
     //to check whether req has returned
-    progress(idx , krona + amount , quota);
+    display(idx , krona + amount , quota);
     if(krona + amount == quota) repay();
     nextAdvance = true;
     krona += amount;
@@ -45,7 +44,7 @@ void *Request::running(void *ptr){
     Request *self = (Request *) ptr;
     // ^ like this pointer
 
-    progress(self->idx , self->krona , self->quota);
+    self->display(self->idx , self->krona , self->quota);
     while(1){
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 100) * 3));
@@ -60,7 +59,7 @@ void *Request::running(void *ptr){
         }
         else break;
     }
-    progress(self->idx , self->quota + 1 , self->quota);
+    self->display(self->idx , self->quota + 1 , self->quota);
 
     // generate new client before being deleted
     srand(time(NULL));

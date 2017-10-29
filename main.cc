@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-#include "ui.h"
+#include "tui.h"
 #include "bank.h"
 #include "request.h"
 
@@ -23,7 +23,7 @@ int main(void){
     progress(-1 , -1 , -1);
     // init progress
 
-    Bank bank(1000);
+    Bank bank(1000 , progress , UIExit);
     bank.active();
     RequestGenerator reqGen(bank , progress);
 

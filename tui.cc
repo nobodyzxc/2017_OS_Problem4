@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <termios.h>
 
-#include "ui.h"
+#include "tui.h"
 
 #define MONEY '$' //'#'
 #define EMPTY ' ' //'-'

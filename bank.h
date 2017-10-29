@@ -9,7 +9,9 @@ class Request;
 
 class Bank{
     public:
-        Bank(int k);
+        Bank(int k ,
+                void (*_display)(int , float , float) ,
+                void (*_stopUI)(int));
 
         void setLimitPayment(int count);
 
@@ -23,6 +25,8 @@ class Bank{
         int krona;
         int initKrona;
         int limitPayments;
+        void (*display)(int , float , float);
+        void (*stopUI)(int);
 
         pthread_t threadID;
         pthread_mutex_t queLock;

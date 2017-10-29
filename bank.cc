@@ -1,13 +1,17 @@
-#include "ui.h"
 #include "bank.h"
 #include "request.h"
 
 using namespace std;
 
-Bank::Bank(int k){
+Bank::Bank(
+        int k ,
+        void (*_display)(int , float , float) ,
+        void (*_stopUI)(int)){
     krona = k;
     initKrona = k;
+    stopUI = _stopUI;
     limitPayments = 0;
+    display = _display;
     pthread_mutex_init(&queLock , NULL);
     pthread_mutex_init(&krnLock , NULL);
 }
@@ -36,9 +40,9 @@ void Bank::getPayment(int amount){
     pthread_mutex_lock(&krnLock);
     count++;
     krona += amount;
-    progress(-1 , krona , initKrona);
+    display(-1 , krona , initKrona);
     if(limitPayments && count >= limitPayments){
-        UIExit(0);
+        stopUI(0);
     }
     pthread_mutex_unlock(&krnLock);
 }
@@ -48,7 +52,7 @@ void *Bank::running(void *ptr){
         // ^ like this pointer
     vector<pair<Request* , int> > &queue = self->reqQueue;
 
-    progress(-1 , self->krona , self->initKrona);
+    self->display(-1 , self->krona , self->initKrona);
 
     // meijin todo:
     // always check the queue
@@ -69,7 +73,7 @@ void *Bank::running(void *ptr){
                     (queue)[0].second);
                 self->krona -= (queue)[0].second;
                 (queue).erase((queue).begin());
-                progress(-1 , self->krona , self->initKrona);
+                self->display(-1 , self->krona , self->initKrona);
             }
             //pthread_mutex_unlock(&(self->krnLock));
         }
@@ -77,8 +81,8 @@ void *Bank::running(void *ptr){
         pthread_mutex_unlock(&(self->queLock));
 
         if(self->krona < (MAX_QUOTA / MIN_QUOTA) + 5){
-            progress(-1 , self->krona , self->initKrona);
-            UIExit(1);
+            self->display(-1 , self->krona , self->initKrona);
+            self->stopUI(1);
         }
     }
     return ptr;
