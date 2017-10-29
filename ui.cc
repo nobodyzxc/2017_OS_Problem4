@@ -71,7 +71,7 @@ void progress(int idx , float cur , float quo){
         space[spaceidx[idx]] = 0;
     }
 
-    printf("%s| <- %2d(%4d/%4d) %s\n" ,
+    printf("%s| <- %4d(%4d/%4d) %s\n" ,
             s , idx ,
             (int)min(cur , quo) , (int)quo ,
             row > 0 ? (cur >= quo ? "done!" : "     ") : "bank");

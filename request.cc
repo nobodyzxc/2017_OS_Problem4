@@ -7,7 +7,11 @@
 #include "bank.h"
 #include "request.h"
 
-Request::Request(Bank &bnk , int quo , int id) : bank(bnk){
+Request::Request(
+        Bank &bnk ,
+        RequestGenerator &gen ,
+        int quo , int id) : bank(bnk) , generator(gen){
+    display = gen.display;
     quota = quo , krona = 0 , idx = id , nextAdvance = true;
 }
 
@@ -20,11 +24,10 @@ void Request::active(){
 void Request::addKrona(int amount){
     //nextAdvance is the flag
     //to check whether req has returned
-    krona += amount;
-    progress(idx , krona , quota);
-    if(krona == quota)
-        repay();
+    progress(idx , krona + amount , quota);
+    if(krona + amount == quota) repay();
     nextAdvance = true;
+    krona += amount;
 }
 
 void Request::repay(){
@@ -58,11 +61,23 @@ void *Request::running(void *ptr){
         else break;
     }
     progress(self->idx , self->quota + 1 , self->quota);
+
+    // generate new client before being deleted
+    srand(time(NULL));
+    int child = rand() % 7 / 3;
+    while(child--)
+        (self->generator).genReq(0);
+
+    delete self;
     return ptr;
 }
 
 
-RequestGenerator::RequestGenerator(Bank &bnk) : bank(bnk) {}
+RequestGenerator::RequestGenerator(
+        Bank &bnk ,
+        void (*_display)(int , float , float)) : bank(bnk) {
+    display = _display;
+}
 
 void RequestGenerator::active(int maximum){
     maxCust = maximum;
@@ -86,7 +101,7 @@ void *RequestGenerator::running(void *ptr){
     for(int i = 0 ;// v if maxCust == 0 , generate forever
             (!self->maxCust) || i < self->maxCust ; i++){
 
-        self->genReq((rand() % INT_QUOTA) + MIN_QUOTA);
+        self->genReq(0);
                         // rand quota at most 79
         //sleep(3);
         // ^ should be poisson dist
@@ -96,7 +111,8 @@ void *RequestGenerator::running(void *ptr){
 }
 
 void RequestGenerator::genReq(int quo){
-    Request *req = new Request(bank , quo , curIdx);
-    req->active();
+    if(quo <= 0) quo = (rand() % INT_QUOTA) + MIN_QUOTA;
+    (new Request(bank , *this , quo , curIdx))->active();
+    bank.setLimitPayment(curIdx);
     curIdx += 1;
 }

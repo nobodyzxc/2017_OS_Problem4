@@ -8,7 +8,7 @@
 #include "bank.h"
 #include "request.h"
 
-#define CLIENT 25
+#define CLIENT 10
 using namespace std;
 
 int main(void){
@@ -25,10 +25,9 @@ int main(void){
 
     Bank bank(1000);
     bank.active();
-    RequestGenerator reqGen(bank);
+    RequestGenerator reqGen(bank , progress);
 
     int client = CLIENT;
-    bank.setLimitPayment(CLIENT);
     reqGen.active(CLIENT);
     //auto generate requests
 
@@ -44,7 +43,6 @@ int main(void){
         scanf("%d" , &quota);
         if(quota >= MIN_QUOTA && quota){
             client++;
-            bank.setLimitPayment(client);
             reqGen.genReq(quota);
         }
     }

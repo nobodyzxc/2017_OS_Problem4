@@ -7,6 +7,7 @@
 #define MAX_QUOTA (MIN_QUOTA + INT_QUOTA - 1)
 
 class Bank;
+class RequestGenerator;
 
 class Request{
     public:
@@ -14,7 +15,11 @@ class Request{
 
         int quota , krona , idx;
 
-        Request(Bank &bnk , int quo , int id);
+        void (*display)(int , float , float);
+
+        Request(Bank &bnk ,
+                RequestGenerator &gen ,
+                int quo , int id);
 
         void active();
 
@@ -23,6 +28,7 @@ class Request{
     private:
         Bank &bank;
         pthread_t threadID;
+        RequestGenerator &generator;
 
         static void *running(void *ptr);
 
@@ -33,11 +39,15 @@ class Request{
 
 class RequestGenerator{
     public:
-        RequestGenerator(Bank &bnk);
+        RequestGenerator(
+                Bank &bnk ,
+                void (*_display)(int , float , float));
 
         void active(int maximum);
 
         void genReq(int quo);
+
+        void (*display)(int , float , float);
 
     private:
         Bank &bank;
