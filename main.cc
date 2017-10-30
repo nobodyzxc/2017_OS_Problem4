@@ -27,7 +27,6 @@ int main(void){
     bank.active();
     RequestGenerator reqGen(bank , progress);
 
-    int client = CLIENT;
     reqGen.active(CLIENT);
     //auto generate requests
 
@@ -42,7 +41,6 @@ int main(void){
         int quota;
         scanf("%d" , &quota);
         if(quota >= MIN_QUOTA && quota){
-            client++;
             reqGen.genReq(quota);
         }
     }
