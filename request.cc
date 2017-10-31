@@ -46,10 +46,16 @@ void *Request::running(void *ptr){
 
     self->display(self->idx , self->krona , self->quota);
     while(1){
+    // jeff todo:
+    // impl exp_dist func for transections here
+
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 100) * 3));
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds((rand() % 100) * 3));
+                        //milliseconds(exp_dist());
 #else
         usleep((rand() % 100000) * 3); //request per 1 - 3 secs
+        //usleep(exp_dist());
 #endif
         if(self->krona < self->quota){
             int purchase =
@@ -89,11 +95,6 @@ void RequestGenerator::active(int maximum){
 void *RequestGenerator::running(void *ptr){
     RequestGenerator *self = (RequestGenerator *)ptr;
     //^ like this pointer
-
-    // jeff todo:
-    // poisson dist of transections here
-    // use advanceKrona and repay to generate transections
-
     srand(time(NULL));
 
     //while(1){
