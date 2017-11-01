@@ -33,7 +33,7 @@ class Request{
         static void *running(void *ptr);
 
         void advanceKrona(int amount);
-
+				
         void repay();
 };
 

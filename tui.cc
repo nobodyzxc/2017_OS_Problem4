@@ -33,8 +33,7 @@ int avail(){
 void progress(int idx , float cur , float quo){
     int row;
     static pthread_mutex_t mutex;
-
-    if(idx < 0 && cur < 0 && quo < 0){
+		if(idx < 0 && cur < 0 && quo < 0){
         pthread_mutex_init(&mutex , NULL);
         for(int i = 0 ; i < SCRHI ; i++)
             space.push_back(0);
