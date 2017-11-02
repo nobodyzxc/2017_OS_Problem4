@@ -19,7 +19,7 @@ class Bank{
 
         void reqKrona(Request *req , int amount);
 
-        void getPayment(int amount);
+        void getPayment(Request* req, int amount);
 				
 				bool reqCheck(pair<Request*, int> newRequest);
 
@@ -33,7 +33,8 @@ class Bank{
         pthread_t threadID;
         pthread_mutex_t queLock;
         pthread_mutex_t krnLock;
-        vector<pair<Request* , int> > reqQueue;
+        pthread_mutex_t pltLock;
+				vector<pair<Request* , int> > reqQueue;
 				vector<Request*> personList;
 
         static void *running(void *ptr);

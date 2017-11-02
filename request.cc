@@ -30,7 +30,7 @@ void Request::addKrona(int amount){
 }
 
 void Request::repay(){
-    bank.getPayment(quota);
+    bank.getPayment(this, quota);
 }
 
 void Request::advanceKrona(int amount){
@@ -82,11 +82,13 @@ RequestGenerator::RequestGenerator(
         Bank &bnk ,
         void (*_display)(int , float , float)) : bank(bnk) {
     display = _display;
+		maxCust = 0;
+		curIdx = 1;
 }
 
 void RequestGenerator::active(int maximum){
     maxCust = maximum;
-    curIdx = 1;
+    //curIdx = 1;
     pthread_create(
             &threadID , NULL ,
             &RequestGenerator::running , this);
