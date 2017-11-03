@@ -9,6 +9,8 @@ class Request;
 
 class Bank{
     public:
+        int count;
+
         Bank(int k ,
                 void (*_display)(int , float , float) ,
                 void (*_stopUI)(int));
@@ -17,11 +19,13 @@ class Bank{
 
         void active();
 
+        void close();
+
         void reqKrona(Request *req , int amount);
 
         void getPayment(Request* req, int amount);
-				
-				bool reqCheck(pair<Request*, int> newRequest);
+
+        bool reqCheck(pair<Request*, int> newRequest);
 
     private:
         int krona;
@@ -34,8 +38,8 @@ class Bank{
         pthread_mutex_t queLock;
         pthread_mutex_t krnLock;
         pthread_mutex_t pltLock;
-				vector<pair<Request* , int> > reqQueue;
-				vector<Request*> personList;
+        vector<pair<Request* , int> > reqQueue;
+        vector<Request*> personList;
 
         static void *running(void *ptr);
 };

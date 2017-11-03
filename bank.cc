@@ -10,6 +10,7 @@ Bank::Bank(
         void (*_display)(int , float , float) ,
         void (*_stopUI)(int)){
     krona = k;
+    count = 0;
     initKrona = k;
     stopUI = _stopUI;
     limitPayments = 0;
@@ -38,7 +39,6 @@ void Bank::reqKrona(Request *req , int amount){
 }
 
 void Bank::getPayment(Request* req, int amount){
-    static int count = 0;
     // protect krona?
     //pthread_mutex_lock(&pltLock);
     //	pthread_mutex_lock(&krnLock);
@@ -51,13 +51,17 @@ void Bank::getPayment(Request* req, int amount){
             break;
         }
     display(-1 , krona , initKrona);
-    if(limitPayments && count >= limitPayments){
-        stopUI(0);
-    }
+
     //	pthread_mutex_unlock(&krnLock);
     //pthread_mutex_unlock(&pltLock);
 }
 
+void Bank::close(){
+    if(count >= limitPayments)
+        stopUI(0);
+    else
+        stopUI(1);
+}
 
 bool cmp(Request* a, Request* b){
     int aleft = a -> quota - a -> krona, bleft = b -> quota - b -> krona;

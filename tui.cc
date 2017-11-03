@@ -16,6 +16,12 @@
 #define EMPTY ' ' //'-'
 #define CURSOR "█"
 
+int ROWS = -7 , COLS = 0;
+#define LOGROW (ROWS + 5)
+#define PMTROW (ROWS + 4)
+#define SHWROW (ROWS + 2)
+#define PMTCOL (0)
+
 #define ENABLE
 
 using namespace std;
@@ -26,7 +32,6 @@ map<int , int> spaceidx;
 struct termios ot;
 struct winsize term;
 pthread_mutex_t mvpLock , progLock , bookLock;
-int ROWS = -4 , COLS = 0;
 
 void mvprints(int y , int x , const char *s){
 #ifndef ENABLE
@@ -43,15 +48,17 @@ void mvprints(int y , int x , const char *s){
 
 int book(){
 
-    static int idx = 0;
+    static int idx = -1;
+    idx = (idx + 1) % ROWS;
+
     while(idx < ROWS && occ[idx]) idx++;
 
-    if(idx >= ROWS) idx = 0;
+    if(idx >= ROWS) idx = -1;
     else return idx;
 
     while(idx < ROWS && occ[idx]) idx++;
 
-    if(idx >= ROWS && !(idx = 0)) return -1;
+    if(idx >= ROWS && (idx = -1)) return -1;
     else return idx;
 }
 
@@ -89,9 +96,9 @@ void progress(int idx , float cur , float quo){
 
     char s[201] = "";
 
-    for(int i = 0 ; i < 100 ; i++)
+    for(int i = 0 ; i < min(COLS - 26 , 100) ; i++)
         sprintf(s , "%s%c" , s ,
-                i < (cur / quo) * 100 ? MONEY : '.');
+                i < (cur / quo) * min(COLS - 26 , 100) ? MONEY : '.');
 
     if(row > 0 && cur > quo){
         for(int i = 0 ; i < (int)strlen(s) ; i++)
@@ -135,8 +142,7 @@ void tui_init(){
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 
     // set prompt pos
-    mvprints(ROWS + 1 , 0 , ">");
-    mvprints(ROWS + 1 , 1 , "\033[5m" CURSOR "\033[0m");
+    mvprints(PMTROW , 0 , "[0]>""\033[5m" CURSOR "\033[0m");
 
     // init mutex
     pthread_mutex_init(&mvpLock , NULL);
@@ -145,23 +151,40 @@ void tui_init(){
 }
 
 void tui_log(const char *s){
-    mvprints(ROWS + 2 , 0 , "\x1b[0K");
-    mvprints(ROWS + 2 , 0 , s);
+    mvprints(LOGROW , 0 , "\x1b[0K");
+    mvprints(LOGROW , 0 , s);
+}
+
+string initHis[] = {""};
+
+string &strip(string &s){
+    while(s.size() && strchr("\r\n " , s.back()))
+        s.pop_back();
+    return s;
 }
 
 char *tui_input(char *s){
 
-    const int iy = ROWS + 1 , ix = 1;
     static string buffer;
+    static int curIdx = 0;
+    static vector<string> histo(initHis , initHis + 1);
     while(1) {
         int c = getchar();
-
         if(c == 4 || c == 3)
-            tui_exit(1);
+            tui_exit(2);
         if(c == 27){
             getchar();
             sprintf(s , "%c" , "^v><"[getchar() - 'A']);
-            return s;
+            if(strchr("^v" , s[0])){
+                histo[curIdx] = buffer;
+                int nidx = curIdx + (s[0] == '^' ? -1 : 1);
+                if(nidx >= 0 && nidx < (int)histo.size())
+                    curIdx = nidx , buffer = histo[curIdx] , strip(buffer);
+                //continue;
+            }
+            else{
+                return s;
+            }
         }
         else if((c == '\b' || c == 127) && buffer.size())
             buffer.pop_back();
@@ -169,16 +192,21 @@ char *tui_input(char *s){
             buffer.clear();
         else
             buffer.push_back(c);
-        mvprints(iy , ix , "\x1b[0K");
-        if(c == '\n' || c == '\r'){
-            mvprints(iy , ix , "\033[5m" CURSOR "\033[0m");
+        mvprints(PMTROW , PMTCOL , "\x1b[0K");
+        if((c == '\n' || c == '\r') && strip(buffer).size()){
             break;
         }
 
-        sprintf(s , "%s\033[5m" CURSOR "\033[0m" , buffer.c_str());
-        mvprints(iy , ix , s);
+        sprintf(s , "[%d]>%s\033[5m" CURSOR "\033[0m" ,
+                (int)histo.size() - 1 , buffer.c_str());
+        mvprints(PMTROW , PMTCOL , s);
     }
-    mvprints(iy + 1 , 0 , "\x1b[0K"); // clear log
+    mvprints(LOGROW , 0 , "\x1b[0K");
+    curIdx = histo.size();
+    sprintf(s , "[%d]>\033[5m" CURSOR "\033[0m" , curIdx);
+    mvprints(PMTROW , PMTCOL , s);
+    histo.back() = buffer;
+    histo.push_back("");
     sprintf(s , "%s" , buffer.c_str());
     buffer.clear();
     return s;
@@ -186,10 +214,12 @@ char *tui_input(char *s){
 
 void tui_exit(int v){
 
+    char msg[][30] = {"survived !" , "went bankrupt ..." , "stopped"};
     tcsetattr(STDIN_FILENO, TCSANOW, &ot);
-    mvprints(ROWS + 1 , 0 , "\x1b[0K"); // clear prompt
+    mvprints(PMTROW , 0 , "\x1b[0K"); // clear prompt
+    mvprints(LOGROW , 0 , "\x1b[0K"); // clear console.log
     printf("\033[100B\033[1A");
-    printf("The BANK %s\n" , v ? "went bankrupt ..." : "survived !");
+    printf("The BANK %s\n" , msg[v]);
     printf("\e[?25h");
 
     exit(v);

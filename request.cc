@@ -94,6 +94,7 @@ void *Request::running(void *ptr){
 RequestGenerator::RequestGenerator(
         Bank &bnk ,
         void (*_display)(int , float , float)) : bank(bnk) {
+    power = false;
     display = _display;
     maxCust = 0;
     curIdx = 1;
@@ -113,13 +114,12 @@ void *RequestGenerator::running(void *ptr){
     ftime(&timeBuf);
     srand(timeBuf.millitm);
 
-    //while(1){
     for(int i = 0 ;// v if maxCust == 0 , generate forever
             (!self->maxCust) || i < self->maxCust ; i++){
-
-        self->genReq(0);
+        if(self->power)
+            self->genReq(0);
         // rand quota at most 79
-        //sleep(3);
+        sleep(rand() % 3 + 2);
         // ^ should be poisson dist
         // i.e. usleep(poissonDistTime());
     }

@@ -33,12 +33,16 @@ class Request{
         static void *running(void *ptr);
 
         void advanceKrona(int amount);
-				
+
         void repay();
 };
 
 class RequestGenerator{
     public:
+        int curIdx;
+
+        bool power;
+
         RequestGenerator(
                 Bank &bnk ,
                 void (*_display)(int , float , float));
@@ -52,7 +56,7 @@ class RequestGenerator{
     private:
         Bank &bank;
         pthread_t threadID;
-        int curIdx , maxCust;
+        int maxCust;
 
         static void *running(void *ptr);
 };

@@ -7,16 +7,16 @@
 #include "bank.h"
 #include "request.h"
 
-
 #include "tui.h"
-#define UIInit tui_init
-#define UIExit tui_exit
-#define UIDisp progress
-#define UILog  tui_log
-#define INPUT tui_input
-#include <sys/ioctl.h>
+/* UI lib should provide
+ * void UIInit()
+ * void UIExit(int)
+ * void UIDisp(int , float , flaot)
+ * void UILog(char *)
+ * char *INPUT(char *) */
 
 #define CLIENT 10
+#define EQS(a , b) (!strcmp(a , b))
 using namespace std;
 
 Bank bank(1000 , UIDisp , UIExit);
@@ -25,11 +25,43 @@ RequestGenerator reqGen(bank , UIDisp);
 int nextInt(char *s){
     int rtn = 0;
     while(*s == ' ') s++;
+    while(*s && !(*s >= '0' && *s <= '9')) s++;
+    if(!*s) return rtn;
     while(*s >= '0' && *s <= '9') rtn = rtn * 10 + *s - '0' , s++;
     return rtn;
 }
 
 void parse(char *cmd){
+
+    char msg[100];
+
+    if(EQS(cmd , "exit")
+            || EQS(cmd , "quit")
+            || EQS(cmd , "bye"))
+        bank.close();
+
+    if(EQS(cmd , "auto on")
+            || EQS(cmd , "auto")
+            || EQS(cmd , "on")){
+        reqGen.power = true;
+        UILog("auto generating on");
+        return;
+    }
+
+    if(EQS(cmd , "auto off")
+            || EQS(cmd , "off")){
+        reqGen.power = false;
+        UILog("auto generating off");
+        return;
+    }
+
+    if(EQS(cmd , "alive")){
+        sprintf(msg , "%d client(s) alive" ,
+                reqGen.curIdx - bank.count - 1);
+        UILog(msg);
+        return;
+    }
+
     int quota = 0 , inst = 1 , till = 0;
     quota = nextInt(cmd);
 
@@ -54,6 +86,10 @@ void parse(char *cmd){
 
     int diff = till < quota ? -1 : 1;
 
+    sprintf(msg , "from %d to %d repeat %d\n" ,
+            quota , till , inst);
+    UILog(msg);
+
     while(inst--)
         for(int q = quota ; q != till + diff ; q += diff)
             if(q >= MIN_QUOTA){
@@ -67,7 +103,7 @@ void parse(char *cmd){
             }
             else{
                 char msg[100];
-                sprintf(msg , "input : %d , cannot < %d\n" , q , MIN_QUOTA);
+                sprintf(msg , "req %d < %d (MIN_QUOTA)\n" , q , MIN_QUOTA);
                 UILog(msg);
             }
 }
@@ -77,8 +113,8 @@ int main(void){
     UIInit();
     bank.active();
 
-    //auto generate requests
-    //reqGen.active(CLIENT);
+    //auto generate requests (CLIENT)
+    reqGen.active(0);
 
     //key board input
     char str[30];
