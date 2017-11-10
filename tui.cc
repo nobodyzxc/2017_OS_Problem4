@@ -23,7 +23,7 @@ int ROWS = -7 , COLS = 0;
 #define PMTCOL (0)
 
 #define ENABLE
-
+#define EQS(a , b) (!strcmp(a , b))
 using namespace std;
 
 vector<int> occ;
@@ -37,7 +37,6 @@ void mvprints(int y , int x , const char *s){
 #ifndef ENABLE
     return;
 #endif
-
     pthread_mutex_lock(&mvpLock);
     printf("\033[200D\033[100A");
     if(x) printf("\033[%dC" , x);
@@ -163,6 +162,12 @@ string &strip(string &s){
     return s;
 }
 
+void tui_clear(){
+    for(int i = 0 ; i < (int)occ.size() ; i++){
+        if(!occ[i]) mvprints(i + 1 , 0 , "\x1b[0K");
+    }
+}
+
 char *tui_input(char *s){
 
     static string buffer;
@@ -185,6 +190,12 @@ char *tui_input(char *s){
             else{
                 return s;
             }
+        }
+        else if(c == 16 || c == 14){ //ctrl-p , ctrl-n
+            histo[curIdx] = buffer;
+            int nidx = curIdx + 15 - c;
+            if(nidx >= 0 && nidx < (int)histo.size())
+                curIdx = nidx , buffer = histo[curIdx] , strip(buffer);
         }
         else if((c == '\b' || c == 127) && buffer.size())
             buffer.pop_back();
@@ -209,6 +220,11 @@ char *tui_input(char *s){
     histo.push_back("");
     sprintf(s , "%s" , buffer.c_str());
     buffer.clear();
+
+    if(EQS(s , "clear")){
+        tui_clear();
+        return tui_input(s);
+    }
     return s;
 }
 
