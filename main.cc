@@ -31,6 +31,10 @@ int nextInt(char *s){
     return rtn;
 }
 
+int clsdIntvl(int a , int b){
+    return rand() % (abs(a - b) + 1) + min(a , b);
+}
+
 void parse(char *cmd){
 
     char msg[100];
@@ -44,14 +48,14 @@ void parse(char *cmd){
             || EQS(cmd , "auto")
             || EQS(cmd , "on")){
         reqGen.power = true;
-        UILog("auto generating on");
+        UILog("auto generate on");
         return;
     }
 
     if(EQS(cmd , "auto off")
             || EQS(cmd , "off")){
         reqGen.power = false;
-        UILog("auto generating off");
+        UILog("auto generate off");
         return;
     }
 
@@ -62,7 +66,7 @@ void parse(char *cmd){
         return;
     }
 
-    int quota = 0 , inst = 1 , till = 0;
+    int quota = 0 , inst = 1 , till = 0 , rndlmt = 0;
     quota = nextInt(cmd);
 
     char arrow[4][4] = {"^" , "v" , ">" , "<"};
@@ -84,6 +88,11 @@ void parse(char *cmd){
 
     if(till == 0) till = quota;
 
+    if((p = strchr(cmd , ',')))
+        rndlmt = nextInt(p + 1);
+
+    if(rndlmt == 0) rndlmt = quota;
+
     int diff = till < quota ? -1 : 1;
 
     sprintf(msg , "from %d to %d repeat %d\n" ,
@@ -99,7 +108,9 @@ void parse(char *cmd){
 #else
                 usleep(100000); //request per 1 - 3 secs
 #endif
-                reqGen.genReq(q);
+                int req = clsdIntvl(q , rndlmt);
+                while(req < MIN_QUOTA) req = clsdIntvl(q , rndlmt);
+                reqGen.genReq(req);
             }
             else{
                 char msg[100];

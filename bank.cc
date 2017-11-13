@@ -16,8 +16,6 @@ Bank::Bank(
     limitPayments = 0;
     display = _display;
     pthread_mutex_init(&queLock, NULL);
-    pthread_mutex_init(&krnLock, NULL);
-    pthread_mutex_init(&pltLock, NULL);
 }
 
 void Bank::setLimitPayment(int count){
@@ -40,8 +38,6 @@ void Bank::reqKrona(Request *req , int amount){
 
 void Bank::getPayment(Request* req, int amount){
     // protect krona?
-    //pthread_mutex_lock(&pltLock);
-    //	pthread_mutex_lock(&krnLock);
     count++;
     krona += amount;
     for(auto clt = personList.begin() ;
@@ -51,9 +47,6 @@ void Bank::getPayment(Request* req, int amount){
             break;
         }
     display(-1 , krona , initKrona);
-
-    //	pthread_mutex_unlock(&krnLock);
-    //pthread_mutex_unlock(&pltLock);
 }
 
 void Bank::close(){
@@ -110,7 +103,6 @@ void *Bank::running(void *ptr){
             // decide the priority of the queue
             // i.e. makePriority(queue);
             auto vip = queue.front();
-            pthread_mutex_lock(&(self -> krnLock));
             if(self -> reqCheck(vip)){
                 bool flag = false;
                 for(auto clt = persons.begin() ;
@@ -118,9 +110,7 @@ void *Bank::running(void *ptr){
                     if(vip.first -> idx == (*clt) -> idx)
                         flag = true;
                 if(flag == false){
-                    pthread_mutex_lock(&(self -> pltLock));
                     persons.push_back(vip.first);
-                    pthread_mutex_unlock(&(self -> pltLock));
                 }
                 vip.first -> addKrona(
                     vip.second);
@@ -132,7 +122,6 @@ void *Bank::running(void *ptr){
                 queue.push_back(vip);
                 queue.erase(queue.begin());
             }
-            pthread_mutex_unlock(&(self -> krnLock));
         }
 
         pthread_mutex_unlock(&(self -> queLock));

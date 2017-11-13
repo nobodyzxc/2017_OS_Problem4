@@ -185,7 +185,6 @@ char *tui_input(char *s){
                 int nidx = curIdx + (s[0] == '^' ? -1 : 1);
                 if(nidx >= 0 && nidx < (int)histo.size())
                     curIdx = nidx , buffer = histo[curIdx] , strip(buffer);
-                //continue;
             }
             else{
                 return s;
