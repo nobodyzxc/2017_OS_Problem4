@@ -11,7 +11,7 @@
 /* UI lib should provide
  * void UIInit()
  * void UIExit(int)
- * void UIDisp(int , float , flaot)
+ * void UIDisp(int , float , flaot) index, current value, max value
  * void UILog(char *)
  * char *INPUT(char *) */
 
