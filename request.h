@@ -18,7 +18,7 @@ class Request{
         /* quota : max krona that client can borrow
          * krona : current krona
          * idx   : client's id */
-        void (*display)(int , float , float);
+        void (*display)(int , int , int);
         /* function to show client's status */
         Request(Bank &bnk ,
                 RequestGenerator &gen ,
@@ -49,13 +49,13 @@ class RequestGenerator{
         /* switch for power on or power off */
         RequestGenerator(
                 Bank &bnk ,
-                void (*_display)(int , float , float));
+                void (*_display)(int , int , int));
 
         void active(int maximum);
         /* start the thread */
         void genReq(int quo);
         /* generate the clients */
-        void (*display)(int , float , float);
+        void (*display)(int , int , int);
 
     private:
         Bank &bank;

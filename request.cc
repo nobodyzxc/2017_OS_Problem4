@@ -93,7 +93,7 @@ void *Request::running(void *ptr){
 
 RequestGenerator::RequestGenerator(
         Bank &bnk ,
-        void (*_display)(int , float , float)) : bank(bnk) {
+        void (*_display)(int , int , int)) : bank(bnk) {
     power = false;
     display = _display;
     maxCust = 0;

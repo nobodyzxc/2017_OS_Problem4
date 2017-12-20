@@ -13,7 +13,7 @@ class Bank{
         /* count the clients finished */
         Bank(int k ,
                 /* initial krona */
-                void (*_display)(int , float , float) ,
+                void (*_display)(int , int , int) ,
                 /* UI function pointer to display bank status */
                 void (*_stopUI)(int));
                 /* stop the whole UI or hide the bank status */
@@ -37,7 +37,7 @@ class Bank{
         /* the initial krona bank has */
         int limitPayments;
         /* the number of payments bank should receive */
-        void (*display)(int , float , float);
+        void (*display)(int , int , int);
         /* show bank status */
         void (*stopUI)(int);
         /* stop UI or hide bank status */
