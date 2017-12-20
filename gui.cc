@@ -9,7 +9,7 @@
 #include <arpa/inet.h> //inet_addr
 #include <netdb.h> //hostent
 #include <sstream>
-
+#include <unistd.h>
 #include "gui.h"
 
 using namespace std;
@@ -172,7 +172,8 @@ void gui_log(const char *s){
 	cout << s << endl;
 }
 
-void gui_display(int idx, float cur, float quo){	
+void gui_display(int idx, int cur, int quo){	
+	pthread_mutex_lock(&progLock);
 	string str = '{' + make_JSON("max", quo) + ',' +
 								make_JSON("cur", cur) + '}';
 	string out_data;
@@ -185,13 +186,12 @@ void gui_display(int idx, float cur, float quo){
 
 	//out_data = '{' + ((idx == -1)? "bank" : ("cus" + idx)) + ':' + str + '}';
 	cout << out_data << endl;
-	pthread_mutex_lock(&progLock);
 	c.send_data(out_data);
-	pthread_mutex_unlock(&progLock);
-	
+	sleep(1);
 	/*cout<<"----------------------------\n\n";
 	//cout<<c.receive(1024);
 	cout<<"\n\n----------------------------\n\n";*/
+	pthread_mutex_unlock(&progLock);
 }
 
 void gui_exit(int v){

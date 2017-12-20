@@ -7,7 +7,7 @@ using namespace std;
 
 Bank::Bank(
         int k ,
-        void (*_display)(int , float , float) ,
+        void (*_display)(int , int , int) ,
         void (*_stopUI)(int)){
     krona = k;
     count = 0;
@@ -105,7 +105,7 @@ void *Bank::running(void *ptr){
             auto vip = queue.front();
             if(self -> reqCheck(vip)){
                 bool flag = false;
-                for(auto clt = persons.begin() ;
+                for(auto clt = persons.begin();
                         clt != persons.end() ; clt++)
                     if(vip.first -> idx == (*clt) -> idx)
                         flag = true;
