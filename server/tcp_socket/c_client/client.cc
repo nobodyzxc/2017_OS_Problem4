@@ -1,21 +1,22 @@
 /**
     C++ client example using sockets
 */
-#include<iostream>    //cout
-#include<stdio.h> //printf
-#include<string.h>    //strlen
-#include<string>  //string
-#include<sys/socket.h>    //socket
-#include<arpa/inet.h> //inet_addr
-#include<netdb.h> //hostent
+#include <iostream>    //cout
+#include <stdio.h> //printf
+#include <string.h>    //strlen
+#include <string>  //string
+#include <sys/socket.h>    //socket
+#include <arpa/inet.h> //inet_addr
+#include <netdb.h> //hostent
+#include <sstream>
+
  
 using namespace std;
  
 /**
     TCP Client class
 */
-class tcp_client
-{
+class tcp_client{
 private:
     int sock;
     std::string address;
@@ -29,8 +30,7 @@ public:
     string receive(int);
 };
  
-tcp_client::tcp_client()
-{
+tcp_client::tcp_client(){
     sock = -1;
     port = 0;
     address = "";
@@ -39,8 +39,7 @@ tcp_client::tcp_client()
 /**
     Connect to a host on a certain port number
 */
-bool tcp_client::conn(string address , int port)
-{
+bool tcp_client::conn(string address , int port){
     //create socket if it is not already created
     if(sock == -1)
     {
@@ -108,8 +107,7 @@ bool tcp_client::conn(string address , int port)
 /**
     Send data to the connected host
 */
-bool tcp_client::send_data(string data)
-{
+bool tcp_client::send_data(string data){
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
@@ -124,8 +122,7 @@ bool tcp_client::send_data(string data)
 /**
     Receive data from the connected host
 */
-string tcp_client::receive(int size=512)
-{
+string tcp_client::receive(int size=512){
     char buffer[size];
     string reply;
      
@@ -138,7 +135,14 @@ string tcp_client::receive(int size=512)
     reply = buffer;
     return reply;
 }
- 
+
+string make_JSON(string key, int value){
+	stringstream ss;
+	ss << value;
+	string str = '\"' + key + "\":" + ss.str();
+	return str;
+}
+
 int main(int argc , char *argv[])
 {
     tcp_client c;
@@ -157,7 +161,11 @@ int main(int argc , char *argv[])
     while(1){
 		cout << "type a meg: ";
 		cin >> str;
-		c.send_data(str);
+		string out_data = '{' + make_JSON("1", stoi(str)) 	+ ',' +
+								make_JSON("2", 50) 			+ ',' +
+								make_JSON("3", 100) 		+ ',' +
+								make_JSON("4", 150)  		+ '}';
+		c.send_data(out_data);
     	cout<<"----------------------------\n\n";
     	cout<<c.receive(1024);
     	cout<<"\n\n----------------------------\n\n";

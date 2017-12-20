@@ -57,7 +57,7 @@ ser_io.sockets.on('connection', function(socket) {
 		setInterval(
 			function(){
 				if(update == 1){
-					socket.emit('update', {'str': new String(ss)});
+					socket.emit('update', {'val': new Number(ss)});
 					update = 0;
 				}
 			}
@@ -82,8 +82,12 @@ net.createServer(function(sock) {
         
         console.log('DATA ' + sock.remoteAddress + ': ' + data);
         // Write the data back to the socket, the client will receive it as data from the server
-        sock.write('You said "' + data + '"\0');
-        ss = data;
+       
+	   	//sock.write('You said "' + data + '"\0');
+        
+		json_rev = JSON.parse(data);
+		sock.write(JSON.stringify(json_rev) + '\0')
+		ss = json_rev['1'];
 		update = 1;
     });
     
