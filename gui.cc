@@ -172,7 +172,7 @@ void gui_log(const char *s){
 	cout << s << endl;
 }
 
-void gui_display(int idx, int cur, int quo){	
+void gui_display(int idx, int cur, int quo){
 	pthread_mutex_lock(&progLock);
 	string str = '{' + make_JSON("max", quo) + ',' +
 								make_JSON("cur", cur) + '}';

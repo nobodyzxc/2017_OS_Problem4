@@ -40,6 +40,7 @@ void Bank::reqKrona(Request *req , int amount){
 void Bank::getPayment(Request* req, int amount){
     // protect krona?
     count++;
+    printf("krona = %d + amount + %d = %d\n" , krona , amount , krona + amount);
     krona += amount;
     for(auto clt = personList.begin() ;
             clt != personList.end() ; clt++)
