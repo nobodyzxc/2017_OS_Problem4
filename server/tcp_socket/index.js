@@ -61,7 +61,7 @@ ser_io.sockets.on('connection', function(socket) {
 					update = 0;
 				}
 			}
-		, 100);
+		, 50);
 
 		// 接收來自於瀏覽器的資料
 		socket.on('client_data', function(data) {

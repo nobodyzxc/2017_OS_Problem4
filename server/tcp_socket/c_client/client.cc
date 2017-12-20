@@ -143,6 +143,12 @@ string make_JSON(string key, int value){
 	return str;
 }
 
+// { 	"bank": { "max": %d, "cur": %d },
+//		"cus1": { "max": -1, "cur": %d },
+//		...
+//		"cus20":{ "max": -1, "cur": %d}
+// }
+
 int main(int argc , char *argv[])
 {
     tcp_client c;
