@@ -7,7 +7,7 @@
 #include "bank.h"
 #include "request.h"
 
-#include "tui.h"
+#include "gui.h"
 /* UI lib should provide
  * void UIInit()
  * void UIExit(int)
