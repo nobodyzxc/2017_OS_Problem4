@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <cstdio>
 #include "bank.h"
@@ -69,7 +70,6 @@ bool Bank :: reqCheck(pair<Request*, int> reqInfo){
     //check whether the bank can accept this request or not
     if(remain >= req -> quota - (req -> krona + amount))
         return true;
-    //for(int i = 0; i < personList.size(); i++){
     for(auto clt = personList.begin() ;
             clt != personList.end() ; clt++){
 
@@ -112,9 +112,9 @@ void *Bank::running(void *ptr){
                 if(flag == false){
                     persons.push_back(vip.first);
                 }
+                self -> krona -= vip.second;
                 vip.first -> addKrona(
                     vip.second);
-                self -> krona -= vip.second;
                 queue.erase(queue.begin());
                 self -> display(-1 , self -> krona , self -> initKrona);
             }

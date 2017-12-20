@@ -179,15 +179,16 @@ void gui_display(int idx, int cur, int quo){
 	string out_data;
 	stringstream ss;
 	ss << idx;
-	if(idx == -1)
+	/*if(idx == -1)
 		out_data = "{\"bank\":" + str + "}";
 	else
-		out_data = ("{\"cus" + ss.str()) + "\":" + str + "}";
+		out_data = ("{\"cus" + ss.str()) + "\":" + str + "}";*/
 
-	//out_data = '{' + ((idx == -1)? "bank" : ("cus" + idx)) + ':' + str + '}';
+	out_data = "{" + ((idx == -1)? "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
+	
 	cout << out_data << endl;
 	c.send_data(out_data);
-	sleep(1);
+	//sleep(1);
 	/*cout<<"----------------------------\n\n";
 	//cout<<c.receive(1024);
 	cout<<"\n\n----------------------------\n\n";*/

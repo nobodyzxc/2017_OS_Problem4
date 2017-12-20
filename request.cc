@@ -35,7 +35,7 @@ void Request::addKrona(int amount){
 }
 
 void Request::repay(){
-    display(idx , quota + 1 , quota);
+    display(idx , quota, quota);
     bank.getPayment(this, quota);
 }
 
