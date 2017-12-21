@@ -104,31 +104,18 @@ net.createServer(function(sock) {
     // Add a 'data' event handler to this instance of socket
     sock.on('data', function(data) {
 
-        console.log('DATA ' + sock.remoteAddress + ': ' + data);
+        //console.log('DATA ' + sock.remoteAddress + ': ' + data);
         // Write the data back to the socket, the client will receive it as data from the server
-<<<<<<< HEAD:server/index.js
-		
-		json_rev = JSON.parse(data);
-		sock.write(JSON.stringify(json_rev) + '\0')
-		for (var who in json_rev){
-			for (var att in json_rev[who]){
-				json_current_state[who][att] = json_rev[who][att];
-			}
-		}
-		console.log('\n\nJSON now: \n' + JSON.stringify(json_current_state));
-		//ss = json_rev['1'];
-		update = 1;
-=======
-				//sock.write('You said "' + data + '"\0');
-				data = "[" + data.toString('utf8').substring(0 , data.length - 1) + "]";
-    
-				json_rev = JSON.parse(data);
-				for(var i = 0 ; i < json_rev.length ; i++){
-					sock.write(JSON.stringify(json_rev) + '\0')
-					ss = json_rev['1'];
-					update = 1;
-				}
->>>>>>> interface:server/index.js
+        //sock.write('You said "' + data + '"\0');
+        data = "[" + data.toString('utf8').substring(0 , data.length - 1) + "]";
+
+        json_rev = JSON.parse(data);
+        for(var i = 0 ; i < json_rev.length ; i++){
+            console.log(json_rev[i]);
+            sock.write(JSON.stringify(json_rev) + '\0')
+            ss = json_rev['1'];
+            update = 1;
+        }
     });
 
     // Add a 'close' event handler to this instance of socket
