@@ -106,6 +106,7 @@ net.createServer(function(sock) {
 
         console.log('DATA ' + sock.remoteAddress + ': ' + data);
         // Write the data back to the socket, the client will receive it as data from the server
+<<<<<<< HEAD:server/index.js
 		
 		json_rev = JSON.parse(data);
 		sock.write(JSON.stringify(json_rev) + '\0')
@@ -117,6 +118,17 @@ net.createServer(function(sock) {
 		console.log('\n\nJSON now: \n' + JSON.stringify(json_current_state));
 		//ss = json_rev['1'];
 		update = 1;
+=======
+				//sock.write('You said "' + data + '"\0');
+				data = "[" + data.toString('utf8').substring(0 , data.length - 1) + "]";
+    
+				json_rev = JSON.parse(data);
+				for(var i = 0 ; i < json_rev.length ; i++){
+					sock.write(JSON.stringify(json_rev) + '\0')
+					ss = json_rev['1'];
+					update = 1;
+				}
+>>>>>>> interface:server/index.js
     });
 
     // Add a 'close' event handler to this instance of socket

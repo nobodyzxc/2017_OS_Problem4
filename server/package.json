@@ -1,8 +1,19 @@
 {
+<<<<<<< HEAD
   "name": "tcp_socket",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+=======
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {},
+>>>>>>> interface
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

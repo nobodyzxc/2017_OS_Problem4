@@ -1,0 +1,6 @@
+node_modules/
+*.o
+*.exe
+node_modules/
+http/
+.*.*.swp

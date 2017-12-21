@@ -1,0 +1,24 @@
+<h1>
+    Final Proj
+</h1>
+<div id="feedback">
+</div>
+<script>
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var root = document.getElementById("feedback");
+        var nw = document.createElement("div");;
+        nw.innerHTML = this.responseText;
+        var br = document.createElement('br');
+        root.appendChild(nw);
+        root.appendChild(br);
+    }
+  };
+  xhttp.open("GET", "ajax_info.txt", true);
+  xhttp.send();
+}
+
+setInterval(loadDoc, 100);
+</script>

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <cstdio>
 #include "bank.h"
@@ -7,7 +8,7 @@ using namespace std;
 
 Bank::Bank(
         int k ,
-        void (*_display)(int , float , float) ,
+        void (*_display)(int , int , int) ,
         void (*_stopUI)(int)){
     krona = k;
     count = 0;
@@ -39,6 +40,7 @@ void Bank::reqKrona(Request *req , int amount){
 void Bank::getPayment(Request* req, int amount){
     // protect krona?
     count++;
+    printf("krona = %d + amount + %d = %d\n" , krona , amount , krona + amount);
     krona += amount;
     for(auto clt = personList.begin() ;
             clt != personList.end() ; clt++)
@@ -69,7 +71,6 @@ bool Bank :: reqCheck(pair<Request*, int> reqInfo){
     //check whether the bank can accept this request or not
     if(remain >= req -> quota - (req -> krona + amount))
         return true;
-    //for(int i = 0; i < personList.size(); i++){
     for(auto clt = personList.begin() ;
             clt != personList.end() ; clt++){
 
@@ -105,16 +106,16 @@ void *Bank::running(void *ptr){
             auto vip = queue.front();
             if(self -> reqCheck(vip)){
                 bool flag = false;
-                for(auto clt = persons.begin() ;
+                for(auto clt = persons.begin();
                         clt != persons.end() ; clt++)
                     if(vip.first -> idx == (*clt) -> idx)
                         flag = true;
                 if(flag == false){
                     persons.push_back(vip.first);
                 }
+                self -> krona -= vip.second;
                 vip.first -> addKrona(
                     vip.second);
-                self -> krona -= vip.second;
                 queue.erase(queue.begin());
                 self -> display(-1 , self -> krona , self -> initKrona);
             }
