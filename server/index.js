@@ -111,13 +111,14 @@ net.createServer(function(sock) {
 
 
 		json_rev = JSON.parse(data);
-		sock.write(JSON.stringify(json_rev) + '\0')
+		//sock.write(JSON.stringify(json_rev) + '\0')
 		
         for(var i = 0 ; i < json_rev.length ; i++){
 			for (var who in json_rev[i]){
 				for (var att in json_rev[i][who]){
 					json_current_state[who][att] = json_rev[i][who][att];
 				}
+				console.log(JSON.stringify(json_rev[i]));
 			}
 		}
 
