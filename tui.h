@@ -1,5 +1,5 @@
-#ifndef UI_H
-#define UI_H
+#ifndef TUI_H
+#define TUI_H
 void tui_init();
 void tui_exit(int);
 void tui_log(const char *s);

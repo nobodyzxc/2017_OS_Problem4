@@ -59,13 +59,6 @@ void parse(char *cmd){
         return;
     }
 
-    if(EQS(cmd , "alive")){
-        sprintf(msg , "%d client(s) alive" ,
-                reqGen.curIdx - bank.count - 1);
-        UILog(msg);
-        return;
-    }
-
     int quota = 0 , inst = 1 , till = 0 , rndlmt = 0;
     quota = nextInt(cmd);
 
@@ -125,10 +118,13 @@ int main(void){
     bank.active();
 
     //auto generate requests (CLIENT)
-    reqGen.active(0);
+    reqGen.active(20);
 
     //key board input
+#if 0
     char str[30];
     while(1) parse(INPUT(str));
+#endif
+    while(1);
     return 0;
 }

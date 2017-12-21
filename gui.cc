@@ -60,7 +60,7 @@ bool tcp_client::conn(string address , int port){
 	else    {   /* OK , nothing */  }
 
 	//setup address structure
-	if(inet_addr(address.c_str()) == -1)
+	if(inet_addr(address.c_str()) == (in_addr_t)(-1))
 	{
 		struct hostent *he;
 		struct in_addr **addr_list;
@@ -117,9 +117,9 @@ bool tcp_client::send_data(string data){
 	if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
 	{
 		perror("Send failed : ");
+        exit(0);
 		return false;
 	}
-	cout<<"Data send\n";
 
 	return true;
 }
@@ -169,7 +169,7 @@ void gui_init()
 	//c.send_data("this is a meg!");
 
 void gui_log(const char *s){
-	cout << s << endl;
+	cout << "log : " << s << endl;
 }
 
 void gui_display(int idx, int cur, int quo){
@@ -178,6 +178,8 @@ void gui_display(int idx, int cur, int quo){
 								make_JSON("cur", cur) + '}';
 	string out_data;
 	stringstream ss;
+
+    if(idx >= 0) idx += 1;
 	ss << idx;
 	/*if(idx == -1)
 		out_data = "{\"bank\":" + str + "}";
@@ -186,12 +188,8 @@ void gui_display(int idx, int cur, int quo){
 
 	out_data = "{" + ((idx == -1)? "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
 	
-	cout << out_data << endl;
+	//cout << out_data << endl;
 	c.send_data(out_data);
-	//sleep(1);
-	/*cout<<"----------------------------\n\n";
-	//cout<<c.receive(1024);
-	cout<<"\n\n----------------------------\n\n";*/
 	pthread_mutex_unlock(&progLock);
 }
 

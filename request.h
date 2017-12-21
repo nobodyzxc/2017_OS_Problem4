@@ -1,6 +1,8 @@
 #ifndef _REQUEST_H_
 #define _REQUEST_H_
 #include <pthread.h>
+#include <set>
+using namespace std;
 
 #define MIN_QUOTA 20
 #define INT_QUOTA 50
@@ -43,7 +45,6 @@ class Request{
 
 class RequestGenerator{
     public:
-        int curIdx;
         /* count the ids have distributed */
         bool power;
         /* switch for power on or power off */
@@ -56,12 +57,19 @@ class RequestGenerator{
         void genReq(int quo);
         /* generate the clients */
         void (*display)(int , int , int);
-
+        /* */ 
+        /* child flyAway */
+        void flyAway(int idx);
     private:
         Bank &bank;
         pthread_t threadID;
         int maxCust;
+        int curCust;
         /* max number of clients it can generate */
         static void *running(void *ptr);
+        /* rand a child idx */
+        int randIdx();
+        pthread_mutex_t baby_taker;
+        set<int> childs;
 };
 #endif

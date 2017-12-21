@@ -3,6 +3,7 @@
 
 #include <sys/timeb.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "bank.h"
 #include "request.h"
@@ -20,6 +21,7 @@ Request::Request(
 }
 
 void Request::active(){
+    printf("child %2d join\n" , idx);
     pthread_create(
             &threadID , NULL ,
             &Request::running , this);
@@ -37,6 +39,7 @@ void Request::addKrona(int amount){
 void Request::repay(){
     display(idx , quota, quota);
     bank.getPayment(this, quota);
+    generator.flyAway(idx);
 }
 
 void Request::advanceKrona(int amount){
@@ -60,7 +63,7 @@ void *Request::running(void *ptr){
                 std::chrono::milliseconds((rand() % 100) * 3));
         //milliseconds(exp_dist());
 #else
-        usleep((rand() % 100000) * 3); //request per 1 - 3 secs
+        usleep((rand() % 100000) * 3); //request per 0 - 3 secs
         //usleep(exp_dist());
 #endif
         if(self->krona < self->quota){
@@ -94,10 +97,11 @@ void *Request::running(void *ptr){
 RequestGenerator::RequestGenerator(
         Bank &bnk ,
         void (*_display)(int , int , int)) : bank(bnk) {
-    power = false;
+    power = true;
     display = _display;
     maxCust = 0;
-    curIdx = 1;
+    curCust = 0;
+    pthread_mutex_init(&baby_taker , NULL);
 }
 
 void RequestGenerator::active(int maximum){
@@ -114,21 +118,48 @@ void *RequestGenerator::running(void *ptr){
     ftime(&timeBuf);
     srand(timeBuf.millitm);
 
+    while(1){
+        if(self->curCust < self->maxCust){
+            if(self->power) self->genReq(0);
+            sleep(4);
+            //sleep_possion();
+        }
+    }
+#if 0
+    /* legacy below */
     for(int i = 0 ;// v if maxCust == 0 , generate forever
             (!self->maxCust) || i < self->maxCust ; i++){
-        if(self->power)
-            self->genReq(0);
         // rand quota at most 79
         sleep(rand() % 3 + 2);
         // ^ should be poisson dist
         // i.e. usleep(poissonDistTime());
     }
+#endif
     return ptr;
+}
+
+
+int RequestGenerator::randIdx(){
+    int idx;
+    pthread_mutex_lock(&baby_taker);
+    assert(curCust < maxCust);
+    while(childs.find(idx = rand() % maxCust) != childs.end());
+    curCust += 1;
+    pthread_mutex_unlock(&baby_taker);
+    return idx;
+}
+
+void RequestGenerator::flyAway(int idx){
+    pthread_mutex_lock(&baby_taker);
+    childs.erase(idx);
+    printf("child %2d left\n" , idx);
+    curCust -= 1;
+    pthread_mutex_unlock(&baby_taker);
 }
 
 void RequestGenerator::genReq(int quo){
     if(quo <= 0) quo = (rand() % INT_QUOTA) + MIN_QUOTA;
-    (new Request(bank , *this , quo , curIdx))->active();
-    bank.setLimitPayment(curIdx);
-    curIdx += 1;
+    int newIdx = randIdx();
+    (new Request(bank , *this , quo , newIdx))->active();
+    bank.setLimitPayment(curCust);
 }
