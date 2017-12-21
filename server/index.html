@@ -54,18 +54,6 @@
   <body>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
 	<!-- element defien -->
-	<div class="prog_cont" id="cont_sample_cus" style="display:none">
-		<div class="prog_bar prog_bar_cus">
-			50%
-		</div>
-	</div>
-	
-	<div class="prog_cont" id="cont_sample_bank" style="display:none">
-		<div class="prog_bar prog_bar_bank">
-      		70%
-		</div>
-	</div>
-
 	<div class="cus_canvas">
 		<div id="cus_row_1" style="clear: left"></div>
 		<div id="cus_row_2" style="clear: left"></div>
@@ -75,7 +63,7 @@
 
 	<div class="cus_cont" id="cus_cont_sample" style="display:none">
 		<div class="cus_text" style="margin:2px; font-family:monospace; font-size: 13px"></div>
-		<div class="cus_prog"></div>
+		<div class="cus_prog" style="visibility: hidden"></div>
 		<div class="cus_text_bot" style="margin:2px; font-family:monospace; font-size: 17px"></div>
 	</div>
 	<!-- element defien -->	
@@ -91,7 +79,7 @@
 		strokeWidth: 4,
 		trailWidth: 1,
 		easing: 'easeInOut',
-		duration: 100,
+		duration: 500,
 		text: {
 		  autoStyleContainer: false
 		},
@@ -103,10 +91,16 @@
 		  circle.path.setAttribute('stroke-width', state.width);
 		
 		  var value = Math.round(circle.value() * 100);
-		  if(value === 100){
-			circle.setText('Null');
+		  if(circle.value() === 1.0){
+			//circle.setText('Null');
+			//circle.set(0);
+			//circle.stop();
 			circle.svg.parentNode.style.visibility = "hidden";
+			//var tt = circle.svg.parentNode.nextSibling.innerHTML;
+			//circle.svg.parentNode.parentNode.childNodes[2].innerHTML = "Empty";
+			//console.log(tt);
 		  }else{
+			//circle.svg.parentNode.style.visibility = "visible";
 		  	circle.setText(value + '%');
 		  }
 		}
@@ -132,8 +126,8 @@
 	  for(i=0; i<20; i++){
 	  	var bar = new ProgressBar.Circle( ('#cus' + (i+1)), prog_opts);
 		bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-		bar.text.style.fontSize = '2rem';	
-		bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
+		bar.text.style.fontSize = '2rem';
+		//bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
 		js_bars['cus' + (i+1) ] = bar;
 		js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
 	  }
@@ -145,12 +139,13 @@
 			var new_max = js_update['cus' + (i+1)]['max'];
 			var new_cur = js_update['cus' + (i+1)]['cur'];
 			var bar = js_bars['cus' + (i+1)];
+			var prog = $("#cus" + (i+1));
 			if(new_max !== -1 && js_cus['cus'+(i+1)]['max'] === -1 ){
-				$('#cus' + (i+1)).css('visibility', 'visible');
 				bar.set(0);
+				prog.css('visibility', 'visible');
 			}
-			if(new_max === -1){ $('#cus' + (i+1)).siblings(".cus_text_bot").text("Empty"); }
-			else { $('#cus' + (i+1)).siblings(".cus_text_bot").text(new_cur + '/' + new_max); }
+			if(new_max === -1 || prog.css('visibility') === 'hidden'){ prog.siblings(".cus_text_bot").text("Empty"); }
+			else { prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  prog.css('visibility', 'visible');}
 
 			js_cus['cus' + (i+1)]['max'] = new_max;
 			js_cus['cus' + (i+1)]['cur'] = new_cur;
