@@ -87,7 +87,7 @@ ser_io.sockets.on('connection', function(socket) {
 					update = 0;
 				}
 			}
-		, 50);
+		, 100);
 
 		// 接收來自於瀏覽器的資料
 		socket.on('client_data', function(data) {
@@ -109,13 +109,22 @@ net.createServer(function(sock) {
         //sock.write('You said "' + data + '"\0');
         data = "[" + data.toString('utf8').substring(0 , data.length - 1) + "]";
 
-        json_rev = JSON.parse(data);
+
+		json_rev = JSON.parse(data);
+		sock.write(JSON.stringify(json_rev) + '\0')
+		
         for(var i = 0 ; i < json_rev.length ; i++){
-            console.log(json_rev[i]);
-            sock.write(JSON.stringify(json_rev) + '\0')
-            ss = json_rev['1'];
-            update = 1;
-        }
+			for (var who in json_rev[i]){
+				for (var att in json_rev[i][who]){
+					json_current_state[who][att] = json_rev[i][who][att];
+				}
+			}
+		}
+
+		//console.log('\n\nJSON now: \n' + JSON.stringify(json_current_state));
+		//ss = json_rev['1'];
+		update = 1;
+
     });
 
     // Add a 'close' event handler to this instance of socket
