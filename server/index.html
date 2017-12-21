@@ -1,0 +1,165 @@
+
+
+<html>
+  <head>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/kimmobrunfeldt/progressbar.js/1.0.0/dist/progressbar.js"></script>
+	<style>
+		* {box-sizing: border-box}
+
+		.cus_cont{
+			border-width: 1px;
+			border-color: #C0E5C2;
+			border-style: solid;
+			text-align: center;
+			color: #131370;
+			margin: 1px;
+			width: 100px;
+			height: 150px;
+			position: relative;
+			float: left;
+		}
+
+		.cus_canvas{
+			height: 800px;
+			width: 1700px;
+			float: left;
+		}
+
+		.cus_prog{
+			margin: 5px;
+			position: relative;
+		}
+
+		.prog_cont{
+			width: 50px;
+			background-color: #ddd;
+		}
+
+		.prog_bar{
+  			text-align: right;
+			padding-right: 20px;
+			line-height: 40px;
+			color: white;
+		}
+		
+		.prog_bar_cus{  width: 1%; background-color: #4CAF50; }
+		.prog_bar_bank{ width: 1%; background-color: #2196F3; }
+
+	</style>
+  </head>
+  <body>
+	<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
+	<!-- element defien -->
+	<div class="prog_cont" id="cont_sample_cus" style="display:none">
+		<div class="prog_bar prog_bar_cus">
+			50%
+		</div>
+	</div>
+	
+	<div class="prog_cont" id="cont_sample_bank" style="display:none">
+		<div class="prog_bar prog_bar_bank">
+      		70%
+		</div>
+	</div>
+
+	<div class="cus_canvas">
+		<div id="cus_row_1" style="clear: left"></div>
+		<div id="cus_row_2" style="clear: left"></div>
+		<div id="cus_row_3" style="clear: left"></div>
+		<div id="cus_row_4" style="clear: left"></div>
+	</div>
+
+	<div class="cus_cont" id="cus_cont_sample" style="display:none">
+		<div class="cus_text" style="margin:2px; font-family:monospace; font-size: 13px"></div>
+		<div class="cus_prog"></div>
+		<div class="cus_text_bot" style="margin:2px; font-family:monospace; font-size: 17px"></div>
+	</div>
+	<!-- element defien -->	
+	
+	<div id="banks">bank here</div>
+    <div id="customers">cus here</div>
+   
+   <script>
+   	  var prog_opts = {
+		color: '#aaa',
+		// This has to be the same size as the maximum width to
+		// prevent clipping
+		strokeWidth: 4,
+		trailWidth: 1,
+		easing: 'easeInOut',
+		duration: 1500,
+		text: {
+		  autoStyleContainer: false
+		},
+		from: { color: '#39700C', width: 1 },
+		to: { color: '#82FF1C', width: 4 },
+		// Set default step function for all animate calls
+		step: function(state, circle, attachment) {
+		  circle.path.setAttribute('stroke', state.color);
+		  circle.path.setAttribute('stroke-width', state.width);
+		
+		  var value = Math.round(circle.value() * 100);
+		  if(value === 100){
+			circle.setText('Null');
+			circle.svg.parentNode.style.visibility = "hidden";
+		  }else{
+		  	circle.setText(value + '%');
+		  }
+		}
+	  }
+
+
+      var socket = io.connect();
+	  var cont_bank = $("#cont_sample_bank").clone();
+	  cont_bank.attr("id", "bank").appendTo("#banks");
+	  //cont_bank.show();
+	  var js_bars = {};
+	  var js_cus = {};
+
+	  for(i=0; i<20; i++){
+	  	var new_cus = $("#cus_cont_sample").clone();
+		new_cus.find(".cus_prog").attr("id", ("cus" + (i+1)));
+		new_cus.find(".cus_text").text("Customer " + (i+1));
+		new_cus.find(".cus_text_bot").text("Empty");
+		$('#cus_row_' + (Math.floor(i / 5) + 1)).append(new_cus);
+		new_cus.show();
+	  }
+	  
+	  for(i=0; i<20; i++){
+	  	var bar = new ProgressBar.Circle( ('#cus' + (i+1)), prog_opts);
+		bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+		bar.text.style.fontSize = '2rem';	
+		bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
+		js_bars['cus' + (i+1) ] = bar;
+		js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
+	  }
+
+      //bars &  
+	  socket.on('update', function(data) {
+		var js_update = data.json;
+		for(i=0; i<20; i++){
+			var new_max = js_update['cus' + (i+1)]['max'];
+			var new_cur = js_update['cus' + (i+1)]['cur'];
+			var bar = js_bars['cus' + (i+1)];
+			if(new_max !== -1 && js_cus['cus'+(i+1)]['max'] === -1 ){
+				$('#cus' + (i+1)).css('visibility', 'visible');
+				bar.set(0);
+			}
+			if(new_max === -1){ $('#cus' + (i+1)).siblings(".cus_text_bot").text("Empty"); }
+			else { $('#cus' + (i+1)).siblings(".cus_text_bot").text(new_cur + '/' + new_max); }
+
+			js_cus['cus' + (i+1)]['max'] = new_max;
+			js_cus['cus' + (i+1)]['cur'] = new_cur;
+			bar.animate( new_cur/new_max )
+		}
+		console.log('updated');
+
+      });
+
+    </script>
+  </body>
+</html>
