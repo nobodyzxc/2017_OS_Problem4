@@ -72,6 +72,8 @@ var json_current_state = {
 		"cus20": { "max": -1, "cur": 0 }
 	};
 
+var gloSock = null;
+
 ser_io.sockets.on('connection', function(socket) {
 		setInterval(function() {
 				socket.emit('date', {'date': new Date()});
@@ -91,23 +93,20 @@ ser_io.sockets.on('connection', function(socket) {
 		socket.on('client_data', function(data) {
 				process.stdout.write(data.letter);
 		});
-
-
 });
 
 
 net.createServer(function(sock) {
-    
+
     // We have a connection - a socket object is assigned to the connection automatically
     console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
-    
+
     // Add a 'data' event handler to this instance of socket
     sock.on('data', function(data) {
-        
+
         console.log('DATA ' + sock.remoteAddress + ': ' + data);
         // Write the data back to the socket, the client will receive it as data from the server
-       
-	   	//sock.write('You said "' + data + '"\0'); 
+		
 		json_rev = JSON.parse(data);
 		sock.write(JSON.stringify(json_rev) + '\0')
 		for (var who in json_rev){
@@ -119,12 +118,12 @@ net.createServer(function(sock) {
 		//ss = json_rev['1'];
 		update = 1;
     });
-    
+
     // Add a 'close' event handler to this instance of socket
     sock.on('close', function(data) {
         console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
     });
-    
+
 }).listen(PORT, HOST);
 
 console.log('Server listening on ' + HOST +':'+ PORT);
