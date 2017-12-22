@@ -4,12 +4,12 @@
 #include <set>
 using namespace std;
 
-#define MIN_QUOTA 100
-#define INT_QUOTA 2000
+#define MIN_QUOTA 5000
+#define INT_QUOTA 13000
 #define AVG_REQNUM 3
 #define BK_KRONA 100000
-#define REQ_LAMBDA 0.08
-#define CUS_LAMBDA 0.13
+#define REQ_LAMBDA 0.12
+#define CUS_LAMBDA 0.17
 #define MAX_QUOTA (MIN_QUOTA + INT_QUOTA - 1)
 
 class Bank;

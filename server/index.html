@@ -22,10 +22,40 @@
 			position: relative;
 			float: left;
 		}
+		
+		#bank_canvas{
+			border-width: 1px;
+			border-color: #C0E5C2;
+			border-style: solid;
+			height: 611px;
+			width: 512px;
+			float: left;
+		}
+
+		#bank_img_div{
+			height: 236px;
+			width: 300px;	
+			clear: left;
+		}
+
+		#bank_prog{
+			height: 250px;
+			width: 500px;
+		}
+
+		#bank_text{
+			color: #131370;
+			padding-top: 40px;
+			height: 100px;
+			width: 500px;
+		}
 
 		.cus_canvas{
-			height: 800px;
-			width: 1700px;
+			border-width: 1px;
+			border-color: #C0E5C2;
+			border-style: solid;
+			height: 611px;
+			width: 512px;
 			float: left;
 		}
 
@@ -34,33 +64,11 @@
 			position: relative;
 		}
 
-		.prog_cont{
-			width: 50px;
-			background-color: #ddd;
-		}
-
-		.prog_bar{
-  			text-align: right;
-			padding-right: 20px;
-			line-height: 40px;
-			color: white;
-		}
-		
-		.prog_bar_cus{  width: 1%; background-color: #4CAF50; }
-		.prog_bar_bank{ width: 1%; background-color: #2196F3; }
-
 	</style>
   </head>
   <body>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
 	<!-- element defien -->
-	<div class="cus_canvas">
-		<div id="cus_row_1" style="clear: left"></div>
-		<div id="cus_row_2" style="clear: left"></div>
-		<div id="cus_row_3" style="clear: left"></div>
-		<div id="cus_row_4" style="clear: left"></div>
-	</div>
-
 	<div class="cus_cont" id="cus_cont_sample" style="display:none">
 		<div class="cus_text" style="margin:2px; font-family:monospace; font-size: 13px"></div>
 		<div class="cus_prog" style="visibility: hidden"></div>
@@ -68,8 +76,19 @@
 	</div>
 	<!-- element defien -->	
 	
-	<div id="banks">bank here</div>
-    <div id="customers">cus here</div>
+	
+	<div class="cus_canvas">
+		<div id="cus_row_1" style="clear: left"></div>
+		<div id="cus_row_2" style="clear: left"></div>
+		<div id="cus_row_3" style="clear: left"></div>
+		<div id="cus_row_4" style="clear: left"></div>
+	</div>
+	<div id="bank_canvas" align="middle">
+		<div id="bank_img_div"><img src="https://edge.alluremedia.com.au/m/l/2012/04/201204121130.jpg" height=236px width=300px ></img></div>
+		<div id="bank_prog"></div>
+		<div id="bank_text" style="font-size: 3.3rem; align-self: flex-end"></div>
+	</div>
+	
    
    <script>
    	  var prog_opts = {
@@ -78,7 +97,7 @@
 		// prevent clipping
 		strokeWidth: 4,
 		trailWidth: 1,
-		easing: 'easeInOut',
+		easing: 'easeOut',
 		duration: 500,
 		text: {
 		  autoStyleContainer: false
@@ -100,7 +119,40 @@
 		  }
 		}
 	  }
+	  
+	  var bar_opts = {
+		  strokeWidth: 3,
+		  color: '#131370',
+		  trailColor: '#eee',
+		  trailWidth: 1,
+		  easing: 'easeOut',
+		  duration: 300,
+		  svgStyle: null,
+		  text: {
+		    value: '',
+		    alignToBottom: true
+		  },
+		  from: {color: '#FF2A1C'},
+		  to: {color: '#87FF42'},
+		  // Set default step function for all animate calls
+		  step: (state, bar) => {
+		    bar.path.setAttribute('stroke', state.color);
+		    var value = Math.round(bar.value() * 100);
+			if(value < 20)
+		      bar.setText("Depression");
+			else if(value < 40)
+		      bar.setText("Danger");
+			else if(value < 60)
+		      bar.setText("Considerable");
+			else if(value < 80)
+		      bar.setText("Moderate");
+			else
+		      bar.setText("Safe");
 
+		    bar.text.style.color = state.color;
+		  }
+	  }
+	
 
       var socket = io.connect();
 	  var cont_bank = $("#cont_sample_bank").clone();
@@ -128,28 +180,50 @@
 		js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
 	  }
 
+	  var bank_bar = new ProgressBar.SemiCircle( '#bank_prog', bar_opts);
+	  bank_bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+	  bank_bar.text.style.fontSize = '4.5rem';
+	  bank_bar.set(1);
+	  $('#bank_text').text( "100,000/100,000");
+	  $('#bank_text').css('font-family', '"Raleway", Helvetica, sans-serif');
+
       //bars &  
 	  socket.on('update', function(data) {
 		var js_update = data.json;
+		var last_coin = 100000;
 		for(i=0; i<20; i++){
 			var new_max = js_update['cus' + (i+1)]['max'];
 			var new_cur = js_update['cus' + (i+1)]['cur'];
 			var bar = js_bars['cus' + (i+1)];
 			var prog = $("#cus" + (i+1));
-
+			if(new_cur !== new_max) last_coin -= new_cur;
 			if(new_cur === 0 && new_max > 0){
 				bar.set(0);
 				prog.css('visibility', 'visible');
 				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
 			}else if( prog.css('visibility') === 'hidden' ){
 				prog.siblings(".cus_text_bot").text("Empty"); 	
+				prog.siblings(".cus_text_bot").css('fontSize', '17px');
 			}else{
 				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
 				bar.animate( new_cur/new_max );  	
 			}
-			
+
+			if(new_max > 9999 && new_max !== new_cur)
+				prog.siblings(".cus_text_bot").css('fontSize', '13px');
+
+			if(last_coin > 999){
+				if(last_coin % 1000 === 0)
+					$('#bank_text').text( Math.floor(last_coin/1000) + ",000/100,000");
+				else
+					$('#bank_text').text( Math.floor(last_coin/1000) + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");	
+			}else{
+				$('#bank_text').text( last_coin + "/100,000");
+			}
+			bank_bar.animate( last_coin/100000 );
 		}
-		console.log('updated');
+		
+		//console.log('updated');
 
       });
 
