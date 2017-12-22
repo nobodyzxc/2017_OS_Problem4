@@ -55,20 +55,16 @@ void *Request::running(void *ptr){
 
     self->display(self->idx , self->krona , self->quota);
     while(1){
-        // jeff todo:
-        // impl exp_dist func for transections here
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(
-                std::chrono::milliseconds((int)(exp_dist() * 1000)));
-        //milliseconds(exp_dist());
+                std::chrono::milliseconds((int)(exp_dist(REQ_LAMBDA) * 1000)));
 #else
         usleep((rand() % 100000) * 3); //request per 0 - 3 secs
-        //usleep(exp_dist());
 #endif
         if(self->krona < self->quota){
             int purchase =
-                min(rand() % (self->quota / 6) + 1 ,
+                min(rand() % (self->quota / AVG_REQNUM) + 1 ,
                         self->quota - self->krona);
             self->advanceKrona(purchase);
         }
@@ -122,7 +118,7 @@ void *RequestGenerator::running(void *ptr){
         if(self->curCust < self->maxCust){
             if(self->power) self->genReq(0);
             std::this_thread::sleep_for(
-                        std::chrono::milliseconds((int)(exp_dist() * 1000)));
+                        std::chrono::milliseconds((int)(exp_dist(CUS_LAMBDA) * 1000)));
             //sleep_possion();
         }
     }

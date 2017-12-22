@@ -19,7 +19,7 @@
 #define EQS(a , b) (!strcmp(a , b))
 using namespace std;
 
-Bank bank(1000 , UIDisp , UIExit);
+Bank bank(BK_KRONA , UIDisp , UIExit);
 RequestGenerator reqGen(bank , UIDisp);
 
 int nextInt(char *s){

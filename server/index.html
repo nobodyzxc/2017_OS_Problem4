@@ -91,16 +91,11 @@
 		  circle.path.setAttribute('stroke-width', state.width);
 		
 		  var value = Math.round(circle.value() * 100);
-		  if(circle.value() === 1.0){
-			//circle.setText('Null');
-			//circle.set(0);
-			//circle.stop();
+		  if(value === 100){
 			circle.svg.parentNode.style.visibility = "hidden";
-			//var tt = circle.svg.parentNode.nextSibling.innerHTML;
-			//circle.svg.parentNode.parentNode.childNodes[2].innerHTML = "Empty";
-			//console.log(tt);
+		  }else if(value === 0){
+		  	circle.setText("New");
 		  }else{
-			//circle.svg.parentNode.style.visibility = "visible";
 		  	circle.setText(value + '%');
 		  }
 		}
@@ -117,6 +112,7 @@
 	  for(i=0; i<20; i++){
 	  	var new_cus = $("#cus_cont_sample").clone();
 		new_cus.find(".cus_prog").attr("id", ("cus" + (i+1)));
+		new_cus.find(".cus_prog").css('visibility', 'hidden');
 		new_cus.find(".cus_text").text("Customer " + (i+1));
 		new_cus.find(".cus_text_bot").text("Empty");
 		$('#cus_row_' + (Math.floor(i / 5) + 1)).append(new_cus);
@@ -140,16 +136,18 @@
 			var new_cur = js_update['cus' + (i+1)]['cur'];
 			var bar = js_bars['cus' + (i+1)];
 			var prog = $("#cus" + (i+1));
-			if(new_max !== -1 && js_cus['cus'+(i+1)]['max'] === -1 ){
+
+			if(new_cur === 0 && new_max > 0){
 				bar.set(0);
 				prog.css('visibility', 'visible');
+				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
+			}else if( prog.css('visibility') === 'hidden' ){
+				prog.siblings(".cus_text_bot").text("Empty"); 	
+			}else{
+				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
+				bar.animate( new_cur/new_max );  	
 			}
-			if(new_max === -1 || prog.css('visibility') === 'hidden'){ prog.siblings(".cus_text_bot").text("Empty"); }
-			else { prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  prog.css('visibility', 'visible');}
-
-			js_cus['cus' + (i+1)]['max'] = new_max;
-			js_cus['cus' + (i+1)]['cur'] = new_cur;
-			bar.animate( new_cur/new_max )
+			
 		}
 		console.log('updated');
 
