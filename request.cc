@@ -7,7 +7,7 @@
 
 #include "bank.h"
 #include "request.h"
-
+#include "exponential.h"
 #include "tui.h"
 
 //#define SPAWN
@@ -60,7 +60,7 @@ void *Request::running(void *ptr){
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(
-                std::chrono::milliseconds((rand() % 100) * 3));
+                std::chrono::milliseconds((int)(exp_dist() * 1000)));
         //milliseconds(exp_dist());
 #else
         usleep((rand() % 100000) * 3); //request per 0 - 3 secs
@@ -68,7 +68,7 @@ void *Request::running(void *ptr){
 #endif
         if(self->krona < self->quota){
             int purchase =
-                min(rand() % (self->quota / MIN_QUOTA) + 1 ,
+                min(rand() % (self->quota / 6) + 1 ,
                         self->quota - self->krona);
             self->advanceKrona(purchase);
         }
@@ -121,7 +121,8 @@ void *RequestGenerator::running(void *ptr){
     while(1){
         if(self->curCust < self->maxCust){
             if(self->power) self->genReq(0);
-            sleep(4);
+            std::this_thread::sleep_for(
+                        std::chrono::milliseconds((int)(exp_dist() * 1000)));
             //sleep_possion();
         }
     }
@@ -145,6 +146,7 @@ int RequestGenerator::randIdx(){
     assert(curCust < maxCust);
     while(childs.find(idx = rand() % maxCust) != childs.end());
     curCust += 1;
+		childs.insert(idx);
     pthread_mutex_unlock(&baby_taker);
     return idx;
 }

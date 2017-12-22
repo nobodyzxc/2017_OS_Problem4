@@ -117,7 +117,6 @@ void *Bank::running(void *ptr){
                 vip.first -> addKrona(
                     vip.second);
                 queue.erase(queue.begin());
-                self -> display(-1 , self -> krona , self -> initKrona);
             }
             else{
                 queue.push_back(vip);

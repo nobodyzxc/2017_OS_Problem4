@@ -5,7 +5,7 @@
 using namespace std;
 
 #define MIN_QUOTA 20
-#define INT_QUOTA 50
+#define INT_QUOTA 100
 #define MAX_QUOTA (MIN_QUOTA + INT_QUOTA - 1)
 
 class Bank;

@@ -2,7 +2,7 @@ CXX   = g++
 CXXFLAGS = -Wall -std=c++11
 MAIN     = main
 _MAIN    = ${MAIN:%=%.cc}
-SRCS     = request gui bank
+SRCS     = request gui bank exponential
 _SRCS    = ${SRCS:%=%.cc}
 _OBJS    = ${SRCS:%=%.o}
 TRGT     = a.exe
