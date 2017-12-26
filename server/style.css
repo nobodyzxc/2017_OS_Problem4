@@ -1,0 +1,111 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+table {
+    font-size: 1em;
+}
+
+.ui-draggable, .ui-droppable {
+    background-position: top;
+}
+
+.slider {
+    /*
+    position:fixed;
+    width:80%;
+    right:30px;
+    margin-right:0px;
+    margin-top:400px;
+    width: 20%;
+     */
+}
+
+.ui-slider{
+}
+
+* {box-sizing: border-box}
+
+.cus_cont{
+    border-width: 1px;
+    border-color: #C0E5C2;
+    border-style: solid;
+    text-align: center;
+    color: #131370;
+    margin: 1px;
+    width: 85px; /* mod here */
+    height: 150px;
+    position: relative;
+    float: left;
+    display:none;
+}
+
+#bank_canvas{
+    /*
+    border-width: 1px;
+    border-color: #C0E5C2;
+    border-style: solid;
+    height: 611px;
+    width: 512px;
+     */
+    float:left;
+}
+
+#bank_img_div{
+    height: 236px;
+    width: 300px;
+    clear: left;
+    margin: 0 auto;
+}
+
+#bank_prog{
+    /*
+    height: 250px;
+    width: 500px;
+     */
+}
+
+#bank_text{
+    color: #131370;
+    padding-top: 40px;
+    /*
+    height: 100px;
+    width: 500px;
+     */
+    margin: 0 auto;
+    font-size: 3.3rem;
+    align-self: flex-end;
+}
+
+.cus_canvas{
+    border-width: 1px;
+    border-color: #C0E5C2;
+    /* border-style: solid; */ /* mod here */
+    /*
+    height: 611px;
+    width: 512px;
+     */
+    /* float: left; */
+}
+
+.cus_prog{
+    margin: 5px;
+    position: relative;
+    visibility: hidden
+}
+
+.cus_text_bot{
+    margin:2px;
+    font-family:monospace;
+    font-size: 17px
+}
+
+.cus_text{
+    margin:2px;
+    font-family:monospace;
+    font-size: 13px
+}
+
+.cus_row{
+    clear: left;
+}

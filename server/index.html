@@ -1,232 +1,61 @@
 
 
 <html>
-  <head>
-	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script src="https://cdn.rawgit.com/kimmobrunfeldt/progressbar.js/1.0.0/dist/progressbar.js"></script>
-	<style>
-		* {box-sizing: border-box}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/jquery-ui.css">
+        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900"
+        rel="stylesheet" type="text/css">
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="https://cdn.rawgit.com/kimmobrunfeldt/progressbar.js/1.0.0/dist/progressbar.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
 
-		.cus_cont{
-			border-width: 1px;
-			border-color: #C0E5C2;
-			border-style: solid;
-			text-align: center;
-			color: #131370;
-			margin: 1px;
-			width: 100px;
-			height: 150px;
-			position: relative;
-			float: left;
-		}
-		
-		#bank_canvas{
-			border-width: 1px;
-			border-color: #C0E5C2;
-			border-style: solid;
-			height: 611px;
-			width: 512px;
-			float: left;
-		}
+        </script>
+    </head>
+    <body>
 
-		#bank_img_div{
-			height: 236px;
-			width: 300px;	
-			clear: left;
-		}
+        <div class="row">
 
-		#bank_prog{
-			height: 250px;
-			width: 500px;
-		}
+            <!-- element defien -->
+            <div class="cus_cont" id="cus_cont_sample">
+                <div class="cus_text"></div>
+                <div class="cus_prog"></div>
+                <div class="cus_text_bot"></div>
+            </div>
+            <!-- element defien -->
 
-		#bank_text{
-			color: #131370;
-			padding-top: 40px;
-			height: 100px;
-			width: 500px;
-		}
+            <div class="cus_canvas col-sm-4">
+                <div id="cus_row_1" class="cus_row"></div>
+                <div id="cus_row_2" class="cus_row"></div>
+                <div id="cus_row_3" class="cus_row"></div>
+                <div id="cus_row_4" class="cus_row"></div>
+            </div>
 
-		.cus_canvas{
-			border-width: 1px;
-			border-color: #C0E5C2;
-			border-style: solid;
-			height: 611px;
-			width: 512px;
-			float: left;
-		}
-
-		.cus_prog{
-			margin: 5px;
-			position: relative;
-		}
-
-	</style>
-  </head>
-  <body>
-	<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
-	<!-- element defien -->
-	<div class="cus_cont" id="cus_cont_sample" style="display:none">
-		<div class="cus_text" style="margin:2px; font-family:monospace; font-size: 13px"></div>
-		<div class="cus_prog" style="visibility: hidden"></div>
-		<div class="cus_text_bot" style="margin:2px; font-family:monospace; font-size: 17px"></div>
-	</div>
-	<!-- element defien -->	
-	
-	
-	<div class="cus_canvas">
-		<div id="cus_row_1" style="clear: left"></div>
-		<div id="cus_row_2" style="clear: left"></div>
-		<div id="cus_row_3" style="clear: left"></div>
-		<div id="cus_row_4" style="clear: left"></div>
-	</div>
-	<div id="bank_canvas" align="middle">
-		<div id="bank_img_div"><img src="https://edge.alluremedia.com.au/m/l/2012/04/201204121130.jpg" height=236px width=300px ></img></div>
-		<div id="bank_prog"></div>
-		<div id="bank_text" style="font-size: 3.3rem; align-self: flex-end"></div>
-	</div>
-	
-   
-   <script>
-   	  var prog_opts = {
-		color: '#aaa',
-		// This has to be the same size as the maximum width to
-		// prevent clipping
-		strokeWidth: 4,
-		trailWidth: 1,
-		easing: 'easeOut',
-		duration: 500,
-		text: {
-		  autoStyleContainer: false
-		},
-		from: { color: '#39700C', width: 1 },
-		to: { color: '#82FF1C', width: 4 },
-		// Set default step function for all animate calls
-		step: function(state, circle, attachment) {
-		  circle.path.setAttribute('stroke', state.color);
-		  circle.path.setAttribute('stroke-width', state.width);
-		
-		  var value = Math.round(circle.value() * 100);
-		  if(value === 100){
-			circle.svg.parentNode.style.visibility = "hidden";
-		  }else if(value === 0){
-		  	circle.setText("New");
-		  }else{
-		  	circle.setText(value + '%');
-		  }
-		}
-	  }
-	  
-	  var bar_opts = {
-		  strokeWidth: 3,
-		  color: '#131370',
-		  trailColor: '#eee',
-		  trailWidth: 1,
-		  easing: 'easeOut',
-		  duration: 300,
-		  svgStyle: null,
-		  text: {
-		    value: '',
-		    alignToBottom: true
-		  },
-		  from: {color: '#FF2A1C'},
-		  to: {color: '#87FF42'},
-		  // Set default step function for all animate calls
-		  step: (state, bar) => {
-		    bar.path.setAttribute('stroke', state.color);
-		    var value = Math.round(bar.value() * 100);
-			if(value < 20)
-		      bar.setText("Depression");
-			else if(value < 40)
-		      bar.setText("Danger");
-			else if(value < 60)
-		      bar.setText("Considerable");
-			else if(value < 80)
-		      bar.setText("Moderate");
-			else
-		      bar.setText("Safe");
-
-		    bar.text.style.color = state.color;
-		  }
-	  }
-	
-
-      var socket = io.connect();
-	  var cont_bank = $("#cont_sample_bank").clone();
-	  cont_bank.attr("id", "bank").appendTo("#banks");
-	  //cont_bank.show();
-	  var js_bars = {};
-	  var js_cus = {};
-
-	  for(i=0; i<20; i++){
-	  	var new_cus = $("#cus_cont_sample").clone();
-		new_cus.find(".cus_prog").attr("id", ("cus" + (i+1)));
-		new_cus.find(".cus_prog").css('visibility', 'hidden');
-		new_cus.find(".cus_text").text("Customer " + (i+1));
-		new_cus.find(".cus_text_bot").text("Empty");
-		$('#cus_row_' + (Math.floor(i / 5) + 1)).append(new_cus);
-		new_cus.show();
-	  }
-	  
-	  for(i=0; i<20; i++){
-	  	var bar = new ProgressBar.Circle( ('#cus' + (i+1)), prog_opts);
-		bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-		bar.text.style.fontSize = '2rem';
-		//bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
-		js_bars['cus' + (i+1) ] = bar;
-		js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
-	  }
-
-	  var bank_bar = new ProgressBar.SemiCircle( '#bank_prog', bar_opts);
-	  bank_bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-	  bank_bar.text.style.fontSize = '4.5rem';
-	  bank_bar.set(1);
-	  $('#bank_text').text( "100,000/100,000");
-	  $('#bank_text').css('font-family', '"Raleway", Helvetica, sans-serif');
-
-      //bars &  
-	  socket.on('update', function(data) {
-		var js_update = data.json;
-		var last_coin = 100000;
-		for(i=0; i<20; i++){
-			var new_max = js_update['cus' + (i+1)]['max'];
-			var new_cur = js_update['cus' + (i+1)]['cur'];
-			var bar = js_bars['cus' + (i+1)];
-			var prog = $("#cus" + (i+1));
-			if(new_cur !== new_max) last_coin -= new_cur;
-			if(new_cur === 0 && new_max > 0){
-				bar.set(0);
-				prog.css('visibility', 'visible');
-				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
-			}else if( prog.css('visibility') === 'hidden' ){
-				prog.siblings(".cus_text_bot").text("Empty"); 	
-				prog.siblings(".cus_text_bot").css('fontSize', '17px');
-			}else{
-				prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);  
-				bar.animate( new_cur/new_max );  	
-			}
-
-			if(new_max > 9999 && new_max !== new_cur)
-				prog.siblings(".cus_text_bot").css('fontSize', '13px');
-
-			if(last_coin > 999){
-				if(last_coin % 1000 === 0)
-					$('#bank_text').text( Math.floor(last_coin/1000) + ",000/100,000");
-				else
-					$('#bank_text').text( Math.floor(last_coin/1000) + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");	
-			}else{
-				$('#bank_text').text( last_coin + "/100,000");
-			}
-			bank_bar.animate( last_coin/100000 );
-		}
-		
-		//console.log('updated');
-
-      });
-
-    </script>
-  </body>
+            <div id="bank_canvas" class="col-sm-4">
+                <div id="bank_img_div">
+                    <img src="https://edge.alluremedia.com.au/m/l/2012/04/201204121130.jpg"
+                    height=236px width=300px >
+                </div>
+                <div id="bank_prog"></div>
+                <div id="bank_text" align="center"></div>
+            </div>
+            <!-- cannot move js' pos , why? -->
+            <script src="client.js"></script>
+            <div id="sliders" class="col-sm-3">
+                <h3 id="sld_head0">arg0</h3>
+                <div id="slider0" class="slider"></div>
+                <h3 id="sld_head1">arg1</h3>
+                <div id="slider1" class="slider"></div>
+                <h3 id="sld_head2">arg2</h3>
+                <div id="slider2" class="slider"></div>
+            </div>
+            <script src="args.js"></script>
+        </div>
+    </body>
 </html>
