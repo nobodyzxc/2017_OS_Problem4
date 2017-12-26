@@ -31,9 +31,9 @@ void Request::addKrona(int amount){
     //nextAdvance is the flag
     //to check whether req has returned
     display(idx , krona + amount , quota);
-    if(krona + amount == quota) repay();
-    nextAdvance = true;
     krona += amount;
+    if(krona == quota) repay();
+    else nextAdvance = true;
 }
 
 void Request::repay(){
@@ -73,17 +73,6 @@ void *Request::running(void *ptr){
 
     //self->display(self->idx , self->quota + 1 , self->quota);
     // mv to repay
-
-    // generate new client before being deleted
-    struct timeb timeBuf;
-    ftime(&timeBuf);
-    srand(timeBuf.millitm);
-
-#ifdef SPAWN
-    int child = rand() % 7 / 3;
-    while(child--)
-        (self->generator).genReq(0);
-#endif
 
     delete self;
     return ptr;
