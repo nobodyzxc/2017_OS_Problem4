@@ -39,102 +39,157 @@ var bar_opts = {
         value: '',
         alignToBottom: true
     },
-    from: {
-        color: '#FF2A1C'} ,
-        to: {color: '#87FF42'} ,
-        // Set default step function
-        // for all animate calls
-        step: (state, bar) => {
-            bar.path.
-            setAttribute('stroke', state.color);
-            var value = Math.round(bar.value() * 100);
-            if(value < 20)
+    from: {color: '#FF2A1C'} ,
+    to: {color: '#87FF42'} ,
+    // Set default step function
+    // for all animate calls
+    step: function(state, bar){
+        bar.path.setAttribute('stroke', state.color);
+        var value = Math.round(bar.value() * 100);
+        if(value < 20){
             bar.setText("Depression");
-            else if(value < 40)
+        }
+        else if(value < 40){
             bar.setText("Danger");
-            else if(value < 60)
+        }
+        else if(value < 60){
             bar.setText("Considerable");
-            else if(value < 80)
+        }
+        else if(value < 80){
             bar.setText("Moderate");
-            else
+        }
+        else{
             bar.setText("Safe");
-
-            bar.text.style.color = state.color;
         }
+        bar.text.style.color = state.color;
     }
+}
 
 
-    var socket = io.connect();
-    var cont_bank = $("#cont_sample_bank").clone();
-    cont_bank.attr("id", "bank").appendTo("#banks");
-    //cont_bank.show();
-    var js_bars = {};
-    var js_cus = {};
+var socket = io.connect();
+var cont_bank = $("#cont_sample_bank").clone();
+cont_bank.attr("id", "bank").appendTo("#banks");
+//cont_bank.show();
+var js_bars = {};
+var js_cus = {};
 
+for(i=0; i<20; i++){
+    var new_cus = $("#cus_cont_sample").clone();
+    new_cus.find(".cus_prog").attr("id", ("cus" + (i+1)));
+    new_cus.find(".cus_prog").css('visibility', 'hidden');
+    new_cus.find(".cus_text").text("Customer " + (i+1));
+    new_cus.find(".cus_text_bot").text("Empty");
+    $('#cus_row_' + (Math.floor(i / 5) + 1)).append(new_cus);
+    new_cus.show();
+}
+
+for(i=0; i<20; i++){
+    var bar = new ProgressBar.Circle(('#cus' + (i+1)), prog_opts);
+    bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar.text.style.fontSize = '2rem';
+    //bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
+    js_bars['cus' + (i+1) ] = bar;
+    js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
+}
+
+var bank_bar = new ProgressBar.SemiCircle( '#bank_prog', bar_opts);
+bank_bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+bank_bar.text.style.fontSize = '4.5rem';
+bank_bar.set(1);
+$('#bank_text').text( "100,000/100,000");
+$('#bank_text').css('font-family', '"Raleway", Helvetica, sans-serif');
+
+
+//bars &
+socket.on('init', function(data){
+    console.log(data.json);
+    var js_update = data.json;
+    var last_coin = 100000;
     for(i=0; i<20; i++){
-        var new_cus = $("#cus_cont_sample").clone();
-        new_cus.find(".cus_prog").attr("id", ("cus" + (i+1)));
-        new_cus.find(".cus_prog").css('visibility', 'hidden');
-        new_cus.find(".cus_text").text("Customer " + (i+1));
-        new_cus.find(".cus_text_bot").text("Empty");
-        $('#cus_row_' + (Math.floor(i / 5) + 1)).append(new_cus);
-        new_cus.show();
-    }
+        var new_max = js_update['cus' + (i+1)]['max'];
+        var new_cur = js_update['cus' + (i+1)]['cur'];
+        var bar = js_bars['cus' + (i+1)];
+        var prog = $("#cus" + (i+1));
+        if(new_cur > 0){
+            last_coin -= new_cur;
+        }
+        if(new_cur === 0 && new_max != -1){
+            bar.set(0);
+            prog.css('visibility', 'visible');
+            prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);
+        }else if(new_cur > 0){
+            prog.css('visibility', 'visible');
+            prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);
+            bar.animate(new_cur / new_max);
+        }else{
+            //prog.css('visibility') === 'hidden'
+            prog.siblings(".cus_text_bot").text("Empty");
+            prog.siblings(".cus_text_bot").css('fontSize', '17px');
+        }
 
-    for(i=0; i<20; i++){
-        var bar = new ProgressBar.Circle( ('#cus' + (i+1)), prog_opts);
-        bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-        bar.text.style.fontSize = '2rem';
-        //bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
-        js_bars['cus' + (i+1) ] = bar;
-        js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
-    }
-
-    var bank_bar = new ProgressBar.SemiCircle( '#bank_prog', bar_opts);
-    bank_bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-    bank_bar.text.style.fontSize = '4.5rem';
-    bank_bar.set(1);
-    $('#bank_text').text( "100,000/100,000");
-    $('#bank_text').css('font-family', '"Raleway", Helvetica, sans-serif');
-
-    //bars &
-    socket.on('update', function(data) {
-        var js_update = data.json;
-        var last_coin = 100000;
-        for(i=0; i<20; i++){
-            var new_max = js_update['cus' + (i+1)]['max'];
-            var new_cur = js_update['cus' + (i+1)]['cur'];
-            var bar = js_bars['cus' + (i+1)];
-            var prog = $("#cus" + (i+1));
-            if(new_cur !== new_max) last_coin -= new_cur;
-            if(new_cur === 0 && new_max > 0){
-                bar.set(0);
-                prog.css('visibility', 'visible');
-                prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);
-            }else if( prog.css('visibility') === 'hidden' ){
-                prog.siblings(".cus_text_bot").text("Empty");
-                prog.siblings(".cus_text_bot").css('fontSize', '17px');
-            }else{
-                prog.siblings(".cus_text_bot").text(new_cur + '/' + new_max);
-                bar.animate( new_cur/new_max );
-            }
-
-            if(new_max > 9999 && new_max !== new_cur)
+        if(new_max > 9999 && new_max !== new_cur){
             prog.siblings(".cus_text_bot").css('fontSize', '13px');
-
-            if(last_coin > 999){
-                if(last_coin % 1000 === 0)
-                $('#bank_text').text(
-                    Math.floor(last_coin / 1000) + ",000/100,000");
-                else
-                $('#bank_text').text(Math.floor(last_coin/1000) + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");
-            }else{
-                $('#bank_text').text(last_coin + "/100,000");
-            }
-            bank_bar.animate( last_coin/100000 );
         }
 
-        //console.log('updated');
+        if(last_coin > 999){
+            head_digs = Math.floor(last_coin / 1000);
+            if(last_coin % 1000 === 0){
+                $('#bank_text').text(head_digs + ",000/100,000");
+            }
+            else{
+                $('#bank_text').text(head_digs + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");
+            }
+        }
+        else{
+            $('#bank_text').text(last_coin + "/100,000");
+        }
+        bank_bar.animate(last_coin/100000);
+    }
+});
 
-    });
-
+socket.on('update', function(data){
+    console.log(data);
+    for(var i = 0 ; i < data.length ; i++){
+        for(var key in data[i]){
+            obj = data[i][key];
+            if(key.indexOf('-') >= 0){
+                key = key.replace('-','');
+                obj = $('#' + key);
+                obj.parent().animate({backgroundColor: "#ff0000"}, 3000);
+            }
+            else{
+                if(key != 'bank'){
+                    $('#' + key).parent().stop();
+                    $('#' + key).parent().animate({backgroundColor: "#ffffff"}, 'slow');
+                    var prog = $("#" + key);
+                    if(obj['cur'] === obj['max']){
+                        prog.siblings(".cus_text_bot").text("Empty");
+                        prog.siblings(".cus_text_bot").css('fontSize', '17px');
+                        js_bars[key].animate(obj['cur'] / obj['max']);
+                    }
+                    else{
+                        prog.css('visibility', 'visible');
+                        prog.siblings(".cus_text_bot").text(obj['cur'] + '/' + obj['max']);
+                        js_bars[key].animate(obj['cur'] / obj['max']);
+                        prog.siblings(".cus_text_bot").css('fontSize', '13px');
+                    }
+                }
+                else{
+                    if(obj['cur'] > 999){
+                        head_digs = Math.floor(obj['cur'] / 1000);
+                        if(obj['cur'] % 1000 === 0){
+                            $('#bank_text').text(head_digs + ",000/100,000");
+                        }
+                        else{
+                            $('#bank_text').text(head_digs + "," + ('0' + Math.floor(obj['cur'] % 1000)).slice(-3) + "/100,000");
+                        }
+                    }
+                    else{
+                        $('#bank_text').text(obj['cur'] + "/100,000");
+                    }
+                    bank_bar.animate(obj['cur']/100000);
+                }
+            }
+        }
+    }
+});

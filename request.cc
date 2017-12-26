@@ -21,7 +21,6 @@ Request::Request(
 }
 
 void Request::active(){
-    printf("child %2d join\n" , idx);
     pthread_create(
             &threadID , NULL ,
             &Request::running , this);
@@ -104,13 +103,17 @@ void *RequestGenerator::running(void *ptr){
     srand(timeBuf.millitm);
 
     while(1){
+        pthread_mutex_lock(&(self->baby_taker));
         if(self->curCust < self->maxCust){
             if(self->power) self->genReq(0);
             std::this_thread::sleep_for(
                         std::chrono::milliseconds((int)(exp_dist(CUS_LAMBDA) * 1000)));
             //sleep_possion();
         }
+        else break;
+        pthread_mutex_unlock(&(self->baby_taker));
     }
+    pthread_mutex_unlock(&(self->baby_taker));
 #if 0
     /* legacy below */
     for(int i = 0 ;// v if maxCust == 0 , generate forever
@@ -127,19 +130,21 @@ void *RequestGenerator::running(void *ptr){
 
 int RequestGenerator::randIdx(){
     int idx;
-    pthread_mutex_lock(&baby_taker);
     assert(curCust < maxCust);
+    assert((int)childs.size() < maxCust);
     while(childs.find(idx = rand() % maxCust) != childs.end());
     curCust += 1;
-		childs.insert(idx);
-    pthread_mutex_unlock(&baby_taker);
-    return idx;
+    childs.insert(idx);
+    printf("child %2d join (%d)\n" , idx + 1 , curCust);
+    return idx + 1;
 }
 
 void RequestGenerator::flyAway(int idx){
     pthread_mutex_lock(&baby_taker);
-    childs.erase(idx);
-    printf("child %2d left\n" , idx);
+    childs.erase(idx - 1);
+    //printf("child %2d left , avail = %lu\n" ,
+    //        idx , childs.size());
+    if(curCust == maxCust) active(maxCust);
     curCust -= 1;
     pthread_mutex_unlock(&baby_taker);
 }

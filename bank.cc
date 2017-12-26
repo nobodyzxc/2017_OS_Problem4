@@ -33,6 +33,7 @@ void Bank::reqKrona(Request *req , int amount){
     // who? todo:
     // use mutex to protect bank's queue
     pthread_mutex_lock(&queLock);
+    display(-(req->idx) , amount , req->quota);
     reqQueue.push_back(make_pair(req , amount));
     pthread_mutex_unlock(&queLock);
 }
@@ -48,7 +49,7 @@ void Bank::getPayment(Request* req, int amount){
             personList.erase(clt);
             break;
         }
-    display(-1 , krona , initKrona);
+    display(0 , krona , initKrona);
 }
 
 void Bank::close(){
@@ -88,7 +89,7 @@ void *Bank::running(void *ptr){
     /// ^ like this pointer
     vector<pair<Request* , int> > &queue = self -> reqQueue;
     vector<Request*>& persons = self -> personList;
-    self -> display(-1 , self -> krona , self -> initKrona);
+    self -> display(0 , self -> krona , self -> initKrona);
 
     // meijin todo:
     // always check the queue
@@ -99,7 +100,7 @@ void *Bank::running(void *ptr){
     while(1){
         pthread_mutex_lock(&(self -> queLock));
 
-        if((queue).size()){
+        if(queue.size()){
             // your algorithm here
             // decide the priority of the queue
             // i.e. makePriority(queue);
@@ -107,15 +108,16 @@ void *Bank::running(void *ptr){
             if(self -> reqCheck(vip)){
                 bool flag = false;
                 for(auto clt = persons.begin();
-                        clt != persons.end() ; clt++)
+                        clt != persons.end() ; clt++){
                     if(vip.first -> idx == (*clt) -> idx)
                         flag = true;
+                }
                 if(flag == false){
                     persons.push_back(vip.first);
                 }
                 self -> krona -= vip.second;
-                vip.first -> addKrona(
-                    vip.second);
+                vip.first -> addKrona(vip.second);
+                self -> display(0 , self -> krona , self -> initKrona);
                 queue.erase(queue.begin());
             }
             else{
@@ -127,7 +129,7 @@ void *Bank::running(void *ptr){
         pthread_mutex_unlock(&(self -> queLock));
 
         if(self -> krona < 0){
-            self -> display(-1 , self -> krona , self -> initKrona);
+            self -> display(0 , self -> krona , self -> initKrona);
             self -> stopUI(1);
         }
     }

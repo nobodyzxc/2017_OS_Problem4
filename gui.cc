@@ -114,7 +114,7 @@ bool tcp_client::conn(string address , int port){
  */
 bool tcp_client::send_data(string data){
 	//Send some data
-	if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
+	if(send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
 	{
 		perror("Send failed : ");
         exit(0);
@@ -179,16 +179,16 @@ void gui_display(int idx, int cur, int quo){
 	string out_data;
 	stringstream ss;
 
-    if(idx >= 0) idx += 1;
 	ss << idx;
 	/*if(idx == -1)
 		out_data = "{\"bank\":" + str + "}";
 	else
 		out_data = ("{\"cus" + ss.str()) + "\":" + str + "}";*/
 
-	out_data = "{" + ((idx == -1)? "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
-	
-	//cout << out_data << endl;
+	out_data = "{" + ((idx == 0)? "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
+
+	cout << out_data << endl;
+
 	c.send_data(out_data);
 	pthread_mutex_unlock(&progLock);
 }

@@ -6,6 +6,8 @@ var fs = require('fs')
 var HOST = '127.0.0.1';
 var PORT = 6969;
 var Path = require('path');
+var sockSet = new Set();
+
 
 // Create a server instance, and chain the listen function to it
 // The function passed to net.createServer() becomes the event handler for the 'connection' event
@@ -61,91 +63,95 @@ var ser_io = io.listen(server);
 var update = 0;
 var ss = "original";
 var json_current_state = {
-"bank": { "max": 0, "cur": 0 },
-        "cus1": { "max": -1, "cur": 0 },
-    "cus2": { "max": -1, "cur": 0 },
-"cus3": { "max": -1, "cur": 0 },
-        "cus4": { "max": -1, "cur": 0 },
-    "cus5": { "max": -1, "cur": 0 },
-"cus6": { "max": -1, "cur": 0 },
-        "cus7": { "max": -1, "cur": 0 },
-    "cus8": { "max": -1, "cur": 0 },
-"cus9": { "max": -1, "cur": 0 },
-        "cus10": { "max": -1, "cur": 0 },
-    "cus11": { "max": -1, "cur": 0 },
-"cus12": { "max": -1, "cur": 0 },
-        "cus13": { "max": -1, "cur": 0 },
-    "cus14": { "max": -1, "cur": 0 },
-"cus15": { "max": -1, "cur": 0 },
-        "cus16": { "max": -1, "cur": 0 },
-    "cus17": { "max": -1, "cur": 0 },
-"cus18": { "max": -1, "cur": 0 },
-        "cus19": { "max": -1, "cur": 0 },
-        "cus20": { "max": -1, "cur": 0 }
-    };
+    "bank": { "max": 0, "cur": 0 } ,
+    "cus1": { "max": -1, "cur": 0 } ,
+    "cus2": { "max": -1, "cur": 0 } ,
+    "cus3": { "max": -1, "cur": 0 } ,
+    "cus4": { "max": -1, "cur": 0 } ,
+    "cus5": { "max": -1, "cur": 0 } ,
+    "cus6": { "max": -1, "cur": 0 } ,
+    "cus7": { "max": -1, "cur": 0 } ,
+    "cus8": { "max": -1, "cur": 0 } ,
+    "cus9": { "max": -1, "cur": 0 } ,
+    "cus10": { "max": -1, "cur": 0 } ,
+    "cus11": { "max": -1, "cur": 0 } ,
+    "cus12": { "max": -1, "cur": 0 } ,
+    "cus13": { "max": -1, "cur": 0 } ,
+    "cus14": { "max": -1, "cur": 0 } ,
+    "cus15": { "max": -1, "cur": 0 } ,
+    "cus16": { "max": -1, "cur": 0 } ,
+    "cus17": { "max": -1, "cur": 0 } ,
+    "cus18": { "max": -1, "cur": 0 } ,
+    "cus19": { "max": -1, "cur": 0 } ,
+    "cus20": { "max": -1, "cur": 0 }
+};
 
-    var gloSock = null;
+ser_io.sockets.on('connection', function(socket){
+    socket.emit('init', {'json': json_current_state});
+    sockSet.add(socket);
+});
+/*
+ setInterval(function(){
+     socket.emit('date', {'date': new Date()});
+ },
+ 1000);
 
-    ser_io.sockets.on('connection', function(socket) {
-        setInterval(function() {
-            socket.emit('date', {'date': new Date()});
-        }, 1000);
+ setInterval(function(){
+     if(update == 1){
+         //socket.emit('update', {'val': new Number(ss)});
+         socket.emit('update', {'json': json_current_state});
+         update = 0;
+     }
+ }
+ , 100);
 
-        setInterval(
-            function(){
-                if(update == 1){
-                    //socket.emit('update', {'val': new Number(ss)});
-                    socket.emit('update', {'json': json_current_state});
-                    update = 0;
+ // 接收來自於瀏覽器的資料
+ socket.on('client_data', function(data) {
+     console.log(data);
+     //process.stdout.write(data.letter);
+ });
+ */
+
+
+/* recv C's info */
+net.createServer(function(sock) {
+
+    // We have a connection -
+    // a socket object is assigned
+    // to the connection automatically
+    console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+
+    // Add a 'data' event handler to this instance of socket
+    sock.on('data', function(data) {
+
+        data = "[" +
+        data.toString('utf8').substring(0 , data.length - 1)
+        + "]";
+
+        json_rev = JSON.parse(data);
+
+        for(var i = 0 ; i < json_rev.length ; i++){
+            for (var who in json_rev[i]){
+                if(who.indexOf('-') >= 0) continue;
+                for (var att in json_rev[i][who]){
+                    json_current_state[who][att] =
+                    json_rev[i][who][att];
                 }
+                console.log(JSON.stringify(json_rev[i]));
             }
-            , 100);
+        }
 
-            // 接收來自於瀏覽器的資料
-            socket.on('client_data', function(data) {
-                console.log(data);
-                //process.stdout.write(data.letter);
-            });
+        sockSet.forEach(function (s) {
+            s.emit('update', json_rev);
         });
+    });
 
+    // Add a 'close' event handler to this instance of socket
+    sock.on('close', function(data) {
+        console.log('CLOSED: ' +
+        sock.remoteAddress + ' ' + sock.remotePort);
+    });
 
-        net.createServer(function(sock) {
+}).listen(PORT, HOST);
 
-            // We have a connection - a socket object is assigned to the connection automatically
-            console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
-
-            // Add a 'data' event handler to this instance of socket
-            sock.on('data', function(data) {
-
-                //console.log('DATA ' + sock.remoteAddress + ': ' + data);
-                // Write the data back to the socket, the client will receive it as data from the server
-                //sock.write('You said "' + data + '"\0');
-                data = "[" + data.toString('utf8').substring(0 , data.length - 1) + "]";
-
-
-                json_rev = JSON.parse(data);
-                //sock.write(JSON.stringify(json_rev) + '\0')
-
-                for(var i = 0 ; i < json_rev.length ; i++){
-                    for (var who in json_rev[i]){
-                        for (var att in json_rev[i][who]){
-                            json_current_state[who][att] = json_rev[i][who][att];
-                        }
-                        console.log(JSON.stringify(json_rev[i]));
-                    }
-                }
-
-                //console.log('\n\nJSON now: \n' + JSON.stringify(json_current_state));
-                //ss = json_rev['1'];
-                update = 1;
-
-            });
-
-            // Add a 'close' event handler to this instance of socket
-            sock.on('close', function(data) {
-                console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
-            });
-
-        }).listen(PORT, HOST);
-
-        console.log('Server listening on ' + HOST +':'+ PORT);
+console.log('Server listening on ' + HOST +':'+ PORT);
