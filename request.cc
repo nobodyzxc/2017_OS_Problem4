@@ -57,7 +57,7 @@ void *Request::running(void *ptr){
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(
                 std::chrono::milliseconds(
-                    (int)(exp_dist(self->generator.req_lambda) * 1000)));
+                    (int)(min(exp_dist(self->generator.req_lambda), (float)5) * 1000)));
 #else
         usleep((rand() % 100000) * 3); //request per 0 - 3 secs
 #endif

@@ -11,10 +11,24 @@ table {
 }
 
 #sliders{
+/*
     padding-top: 0px;
     padding-right: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
+*/	
+	margin: auto;
+	width: 500px;
+	height: 60px;
+}
+
+.slider_cont{
+	text-align: center;
+	font-size: 15px;
+    font-family: monospace;	
+	padding-top: 20px;
+	float: left;
+	width: 240px;
 }
 
 .slider {
@@ -26,6 +40,7 @@ table {
     margin-top:400px;
      */
     width: 90%;
+	margin: auto;
 }
 
 
@@ -41,7 +56,7 @@ table {
     text-align: center;
     color: #131370;
     margin: 1px;
-    width: 85px; /* mod here */
+    width: 100px; /* mod here */
     height: 150px;
     position: relative;
     float: left;
@@ -49,13 +64,11 @@ table {
 }
 
 #bank_canvas{
-    /*
     border-width: 1px;
     border-color: #C0E5C2;
     border-style: solid;
     height: 611px;
-    width: 512px;
-     */
+    width: 512px; 
     float:left;
 }
 
@@ -63,24 +76,26 @@ table {
     height: 236px;
     width: 300px;
     clear: left;
-    margin: 0 auto;
+    margin: auto;
 }
 
 #bank_prog{
-    /*
+    
+	margin: auto;
     height: 250px;
     width: 500px;
-     */
+     
 }
 
 #bank_text{
-    color: #131370;
-    padding-top: 40px;
-    /*
-    height: 100px;
-    width: 500px;
-     */
-    margin: 0 auto;
+    
+	color: #131370;
+    padding-top: 10px;
+    
+    height: 50px;
+    width: 400px;
+    
+    margin: auto;
     font-size: 3.3rem;
     align-self: flex-end;
 }
@@ -88,23 +103,23 @@ table {
 .cus_canvas{
     border-width: 1px;
     border-color: #C0E5C2;
-    /* border-style: solid; */ /* mod here */
-    /*
+    border-style: solid;  /* mod here */
+    
     height: 611px;
-    width: 512px;
-     */
-    /* float: left; */
+    width: 515px;
+     
+    float: left;
 }
 
 .cus_prog{
-    margin: 5px;
+    margin: 2px;
     position: relative;
     visibility: hidden
 }
 
 .cus_text_bot{
-    margin:2px;
-    font-family:monospace;
+    margin: auto;
+    font-family: monospace;
     font-size: 17px;
 }
 
@@ -113,10 +128,11 @@ table {
 }
 
 .cus_text{
-    margin:2px;
+    margin: 2px;
     font-family:monospace;
     font-size: 13px
 }
+
 
 .cus_row{
     clear: left;

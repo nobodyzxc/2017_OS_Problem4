@@ -20,7 +20,7 @@
     </head>
     <body>
 
-        <div class="row">
+        <!--  <div class="row"> -->
 
             <!-- element defien -->
             <div class="cus_cont" id="cus_cont_sample">
@@ -30,30 +30,34 @@
             </div>
             <!-- element defien -->
 
-            <div class="cus_canvas col-sm-4">
+            <div class="cus_canvas">
                 <div id="cus_row_1" class="cus_row"></div>
                 <div id="cus_row_2" class="cus_row"></div>
                 <div id="cus_row_3" class="cus_row"></div>
                 <div id="cus_row_4" class="cus_row"></div>
             </div>
 
-            <div id="bank_canvas" class="col-sm-4">
+            <div id="bank_canvas">
                 <div id="bank_img_div">
                     <img src="https://edge.alluremedia.com.au/m/l/2012/04/201204121130.jpg"
                     height=236px width=300px >
                 </div>
                 <div id="bank_prog"></div>
                 <div id="bank_text" align="center"></div>
+            	<script src="client.js"></script>
+            	<div id="sliders">
+					<div class="slider_cont">
+                		<div id="sld_head0">arg0</div>
+	                	<div id="slider0" class="slider"></div>
+					</div>
+					<div class="slider_cont">
+	                	<div id="sld_head1">arg1</div>
+	                	<div id="slider1" class="slider"></div>
+					</div>
+	            </div>
+	            <script src="args.js"></script>
             </div>
             <!-- cannot move js' pos , why? -->
-            <script src="client.js"></script>
-            <div id="sliders" class="col-sm-4">
-                <h3 id="sld_head0">arg0</h3>
-                <div id="slider0" class="slider"></div>
-                <h3 id="sld_head1">arg1</h3>
-                <div id="slider1" class="slider"></div>
-            </div>
-            <script src="args.js"></script>
-        </div>
+       <!-- </div> -->
     </body>
 </html>
