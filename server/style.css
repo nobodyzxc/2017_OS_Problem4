@@ -10,6 +10,13 @@ table {
     background-position: top;
 }
 
+#sliders{
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+}
+
 .slider {
     /*
     position:fixed;
@@ -17,9 +24,10 @@ table {
     right:30px;
     margin-right:0px;
     margin-top:400px;
-    width: 20%;
      */
+    width: 90%;
 }
+
 
 .ui-slider{
 }

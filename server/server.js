@@ -93,7 +93,19 @@ ser_io.sockets.on('connection', function(socket){
     socket.on('client_data', function(data) {
         console.log(data);
         cppServerSock.write(JSON.stringify(data));
-        cppServerSock.pipe(cppServerSock);
+        //cppServerSock.pipe(cppServerSock);
+        //process.stdout.write(data.letter);
+    });
+});
+
+ser_io.sockets.on('close', function(socket){
+    socket.emit('init', {'json': json_current_state});
+    sockSet.add(socket);
+    // 接收來自於瀏覽器的資料
+    socket.on('client_data', function(data) {
+        console.log(data);
+        cppServerSock.write(JSON.stringify(data));
+        //cppServerSock.pipe(cppServerSock);
         //process.stdout.write(data.letter);
     });
 });

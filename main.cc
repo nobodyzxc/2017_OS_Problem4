@@ -112,12 +112,16 @@ void parse(char *cmd){
             }
 }
 
-float parse_name(string inst){
-    return 0.0;
+string parse_name(string inst){
+//{"name":"cus_lambda","val":0.14}
+    return inst.substr(9 , 10);
 }
 
 float parse_val(string inst){
-    return 0.0;
+    string v = inst.substr(27);
+    v = v.substr(0 , v.find('}'));
+    cout << "parse : " << v << endl;
+    return stof(v);
 }
 
 int main(void){
@@ -135,12 +139,14 @@ int main(void){
 #endif
     while(1){
         string inst = c.receive(512);
-        //string name = parse_name(inst);
-        //if(name == "req_lambda")
-        //    reqGen.req_lambda = parse_val(inst);
-        //else
-        //    reqGen.cus_lambda = parse_val(inst);
-//        cout << inst << endl;
+        string name = parse_name(inst);
+        if(name == "req_lambda"){
+            reqGen.req_lambda = parse_val(inst);
+        }
+        else if(name == "cus_lambda"){
+            reqGen.cus_lambda = parse_val(inst);
+        }
+        name = "";
     }
     return 0;
 }
