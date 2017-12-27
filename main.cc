@@ -125,6 +125,9 @@ int main(void){
     char str[30];
     while(1) parse(INPUT(str));
 #endif
-    while(1);
+    while(1){
+        string inst = c.receive(512);
+        cout << inst << endl;
+    }
     return 0;
 }

@@ -61,9 +61,10 @@ class RequestGenerator{
         void genReq(int quo);
         /* generate the clients */
         void (*display)(int , int , int);
-        /* */ 
         /* child flyAway */
         void flyAway(int idx);
+        float cus_lambda;
+        float req_lambda;
     private:
         Bank &bank;
         pthread_t threadID;

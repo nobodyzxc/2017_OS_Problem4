@@ -36,7 +36,6 @@ void Request::addKrona(int amount){
 }
 
 void Request::repay(){
-    display(idx , quota, quota);
     bank.getPayment(this, quota);
     generator.flyAway(idx);
 }
@@ -86,6 +85,8 @@ RequestGenerator::RequestGenerator(
     maxCust = 0;
     curCust = 0;
     pthread_mutex_init(&baby_taker , NULL);
+    cus_lambda = CUS_LAMBDA;
+    req_lambda = REQ_LAMBDA;
 }
 
 void RequestGenerator::active(int maximum){
@@ -101,7 +102,7 @@ void *RequestGenerator::running(void *ptr){
     struct timeb timeBuf;
     ftime(&timeBuf);
     srand(timeBuf.millitm);
-
+    puts("generator start");
     while(1){
         pthread_mutex_lock(&(self->baby_taker));
         if(self->curCust < self->maxCust){
@@ -114,6 +115,7 @@ void *RequestGenerator::running(void *ptr){
         pthread_mutex_unlock(&(self->baby_taker));
     }
     pthread_mutex_unlock(&(self->baby_taker));
+    puts("generator shutdown");
 #if 0
     /* legacy below */
     for(int i = 0 ;// v if maxCust == 0 , generate forever

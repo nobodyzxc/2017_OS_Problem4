@@ -7,7 +7,7 @@ var HOST = '127.0.0.1';
 var PORT = 6969;
 var Path = require('path');
 var sockSet = new Set();
-
+var cppServerSock;
 
 // Create a server instance, and chain the listen function to it
 // The function passed to net.createServer() becomes the event handler for the 'connection' event
@@ -89,6 +89,13 @@ var json_current_state = {
 ser_io.sockets.on('connection', function(socket){
     socket.emit('init', {'json': json_current_state});
     sockSet.add(socket);
+    // 接收來自於瀏覽器的資料
+    socket.on('client_data', function(data) {
+        console.log(data);
+        cppServerSock.write(JSON.stringify(data));
+        cppServerSock.pipe(cppServerSock);
+        //process.stdout.write(data.letter);
+    });
 });
 /*
  setInterval(function(){
@@ -105,11 +112,6 @@ ser_io.sockets.on('connection', function(socket){
  }
  , 100);
 
- // 接收來自於瀏覽器的資料
- socket.on('client_data', function(data) {
-     console.log(data);
-     //process.stdout.write(data.letter);
- });
  */
 
 
@@ -120,6 +122,8 @@ net.createServer(function(sock) {
     // a socket object is assigned
     // to the connection automatically
     console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+
+    cppServerSock = sock;
 
     // Add a 'data' event handler to this instance of socket
     sock.on('data', function(data) {
@@ -150,6 +154,7 @@ net.createServer(function(sock) {
     sock.on('close', function(data) {
         console.log('CLOSED: ' +
         sock.remoteAddress + ' ' + sock.remotePort);
+        cppServerSock = undefined;
     });
 
 }).listen(PORT, HOST);

@@ -14,23 +14,6 @@
 
 using namespace std;
 
-/**
-	TCP Client class
- */
-class tcp_client{
-	private:
-		int sock;
-		std::string address;
-		int port;
-		struct sockaddr_in server;
-
-	public:
-		tcp_client();
-		bool conn(string, int);
-		bool send_data(string data);
-		string receive(int);
-};
-
 tcp_client::tcp_client(){
 	sock = -1;
 	port = 0;
@@ -185,9 +168,8 @@ void gui_display(int idx, int cur, int quo){
 	else
 		out_data = ("{\"cus" + ss.str()) + "\":" + str + "}";*/
 
-	out_data = "{" + ((idx == 0)? "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
-
-	cout << out_data << endl;
+	out_data = "{" + ((idx == 0) ?
+            "\"bank" : ("\"cus" + ss.str())) + "\":" + str + "} ,";
 
 	c.send_data(out_data);
 	pthread_mutex_unlock(&progLock);

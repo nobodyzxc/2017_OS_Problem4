@@ -106,6 +106,7 @@ void *Bank::running(void *ptr){
             // i.e. makePriority(queue);
             auto vip = queue.front();
             if(self -> reqCheck(vip)){
+                printf("handle %d\n" , vip.first -> idx);
                 bool flag = false;
                 for(auto clt = persons.begin();
                         clt != persons.end() ; clt++){
