@@ -160,19 +160,22 @@ socket.on('update', function(data){
             else{
                 if(key != 'bank'){
                     $('#' + key).parent().stop();
-                    $('#' + key).parent().animate({backgroundColor: "#ffffff"}, 'slow');
                     var prog = $("#" + key);
                     if(obj['cur'] === obj['max']){
+                        $('#' + key).parent().css('background-color', '#ffff00');;
                         prog.siblings(".cus_text_bot").text("Empty");
                         prog.siblings(".cus_text_bot").css('fontSize', '17px');
+                        prog.css('visibility', 'invisible');
                         js_bars[key].animate(obj['cur'] / obj['max']);
                     }
                     else{
-                        prog.css('visibility', 'visible');
+                        $('#' + key).parent().css('background-color', '#00ff00');;
                         prog.siblings(".cus_text_bot").text(obj['cur'] + '/' + obj['max']);
                         js_bars[key].animate(obj['cur'] / obj['max']);
                         prog.siblings(".cus_text_bot").css('fontSize', '13px');
+                        prog.css('visibility', 'visible');
                     }
+                    $('#' + key).parent().animate({backgroundColor: "#ffffff"}, 'slow');
                 }
                 else{
                     if(obj['cur'] > 999){
