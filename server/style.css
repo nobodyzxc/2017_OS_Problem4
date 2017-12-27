@@ -97,7 +97,11 @@ table {
 .cus_text_bot{
     margin:2px;
     font-family:monospace;
-    font-size: 17px
+    font-size: 17px;
+}
+
+.progressbar-text{
+    color:#131370;
 }
 
 .cus_text{
@@ -108,4 +112,7 @@ table {
 
 .cus_row{
     clear: left;
+}
+
+.row{
 }

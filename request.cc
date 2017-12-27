@@ -56,7 +56,8 @@ void *Request::running(void *ptr){
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(
-                std::chrono::milliseconds((int)(exp_dist(REQ_LAMBDA) * 1000)));
+                std::chrono::milliseconds(
+                    (int)(exp_dist(self->generator.req_lambda) * 1000)));
 #else
         usleep((rand() % 100000) * 3); //request per 0 - 3 secs
 #endif
@@ -107,8 +108,11 @@ void *RequestGenerator::running(void *ptr){
         pthread_mutex_lock(&(self->baby_taker));
         if(self->curCust < self->maxCust){
             if(self->power) self->genReq(0);
+            if(self->curCust >= self->maxCust) break;
             std::this_thread::sleep_for(
-                        std::chrono::milliseconds((int)(exp_dist(CUS_LAMBDA) * 1000)));
+                        std::chrono::milliseconds(
+                            (int)(exp_dist(self->cus_lambda) * 1000)));
+
             //sleep_possion();
         }
         else break;

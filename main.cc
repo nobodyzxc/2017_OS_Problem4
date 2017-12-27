@@ -112,6 +112,14 @@ void parse(char *cmd){
             }
 }
 
+float parse_name(string inst){
+    return 0.0;
+}
+
+float parse_val(string inst){
+    return 0.0;
+}
+
 int main(void){
 
     UIInit();
@@ -127,7 +135,12 @@ int main(void){
 #endif
     while(1){
         string inst = c.receive(512);
-        cout << inst << endl;
+        //string name = parse_name(inst);
+        //if(name == "req_lambda")
+        //    reqGen.req_lambda = parse_val(inst);
+        //else
+        //    reqGen.cus_lambda = parse_val(inst);
+//        cout << inst << endl;
     }
     return 0;
 }

@@ -63,27 +63,27 @@ var ser_io = io.listen(server);
 var update = 0;
 var ss = "original";
 var json_current_state = {
-    "bank": { "max": 0, "cur": 0 } ,
-    "cus1": { "max": -1, "cur": 0 } ,
-    "cus2": { "max": -1, "cur": 0 } ,
-    "cus3": { "max": -1, "cur": 0 } ,
-    "cus4": { "max": -1, "cur": 0 } ,
-    "cus5": { "max": -1, "cur": 0 } ,
-    "cus6": { "max": -1, "cur": 0 } ,
-    "cus7": { "max": -1, "cur": 0 } ,
-    "cus8": { "max": -1, "cur": 0 } ,
-    "cus9": { "max": -1, "cur": 0 } ,
-    "cus10": { "max": -1, "cur": 0 } ,
-    "cus11": { "max": -1, "cur": 0 } ,
-    "cus12": { "max": -1, "cur": 0 } ,
-    "cus13": { "max": -1, "cur": 0 } ,
-    "cus14": { "max": -1, "cur": 0 } ,
-    "cus15": { "max": -1, "cur": 0 } ,
-    "cus16": { "max": -1, "cur": 0 } ,
-    "cus17": { "max": -1, "cur": 0 } ,
-    "cus18": { "max": -1, "cur": 0 } ,
-    "cus19": { "max": -1, "cur": 0 } ,
-    "cus20": { "max": -1, "cur": 0 }
+    "bank":  { "max": 100000 , "cur": 100000 , "wait" : 0 } ,
+    "cus1":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus2":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus3":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus4":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus5":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus6":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus7":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus8":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus9":  { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus10": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus11": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus12": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus13": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus14": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus15": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus16": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus17": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus18": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus19": { "max": -1, "cur": 0 , "wait" : 0 } ,
+    "cus20": { "max": -1, "cur": 0 , "wait" : 0 }
 };
 
 ser_io.sockets.on('connection', function(socket){
@@ -136,11 +136,16 @@ net.createServer(function(sock) {
 
         for(var i = 0 ; i < json_rev.length ; i++){
             for (var who in json_rev[i]){
-                if(who.indexOf('-') >= 0) continue;
+                if(who.indexOf('-') >= 0){
+                    who = who.replace('-','');
+                    json_current_state[who]["wait"] = 1;
+                    continue;
+                }
                 for (var att in json_rev[i][who]){
                     json_current_state[who][att] =
                     json_rev[i][who][att];
                 }
+                json_current_state[who]["wait"] = 0;
                 console.log(JSON.stringify(json_rev[i]));
             }
         }

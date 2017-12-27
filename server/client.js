@@ -1,3 +1,9 @@
+var RED_WAIT = '#ff9999'
+var YEL_PAYB = '#ffff00'
+var GRN_GETM = '#00ff00'
+var PUR_SPWN = '#ff99ff'
+var WHT_NOTN = "#ffffff"
+
 var prog_opts = {
     color: '#aaa',
     // This has to be the same size as the maximum width to
@@ -87,6 +93,7 @@ for(i=0; i<20; i++){
     var bar = new ProgressBar.Circle(('#cus' + (i+1)), prog_opts);
     bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
     bar.text.style.fontSize = '2rem';
+    bar.text.style.color = '#131370';
     //bar.animate( (i+1)/20 );  // Number from 0.0 to 1.0
     js_bars['cus' + (i+1) ] = bar;
     js_cus['cus' + (i+1) ] = { "max": -1, "cur": 0 };
@@ -104,14 +111,18 @@ $('#bank_text').css('font-family', '"Raleway", Helvetica, sans-serif');
 socket.on('init', function(data){
     console.log(data.json);
     var js_update = data.json;
-    var last_coin = 100000;
-    for(i=0; i<20; i++){
+    var last_coin = js_update['bank']['cur'];
+    for(i = 0; i < 20; i++){
         var new_max = js_update['cus' + (i+1)]['max'];
         var new_cur = js_update['cus' + (i+1)]['cur'];
+        var wait    = js_update['cus' + (i+1)]['wait'];
         var bar = js_bars['cus' + (i+1)];
         var prog = $("#cus" + (i+1));
-        if(new_cur > 0){
-            last_coin -= new_cur;
+        //if(new_cur > 0){
+            //    last_coin -= new_cur;
+            //}
+            if(wait > 0){
+            $('#' + 'cus' + (i + 1)).parent().animate({backgroundColor: RED_WAIT}, 3000);
         }
         if(new_cur === 0 && new_max != -1){
             bar.set(0);
@@ -130,21 +141,20 @@ socket.on('init', function(data){
         if(new_max > 9999 && new_max !== new_cur){
             prog.siblings(".cus_text_bot").css('fontSize', '13px');
         }
-
-        if(last_coin > 999){
-            head_digs = Math.floor(last_coin / 1000);
-            if(last_coin % 1000 === 0){
-                $('#bank_text').text(head_digs + ",000/100,000");
-            }
-            else{
-                $('#bank_text').text(head_digs + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");
-            }
+    }
+    if(last_coin > 999){
+        head_digs = Math.floor(last_coin / 1000);
+        if(last_coin % 1000 === 0){
+            $('#bank_text').text(head_digs + ",000/100,000");
         }
         else{
-            $('#bank_text').text(last_coin + "/100,000");
+            $('#bank_text').text(head_digs + "," + ('0' + Math.floor(last_coin % 1000)).slice(-3) + "/100,000");
         }
-        bank_bar.animate(last_coin/100000);
     }
+    else{
+        $('#bank_text').text(last_coin + "/100,000");
+    }
+    bank_bar.animate(last_coin/100000);
 });
 
 socket.on('update', function(data){
@@ -155,44 +165,49 @@ socket.on('update', function(data){
             if(key.indexOf('-') >= 0){
                 key = key.replace('-','');
                 obj = $('#' + key);
-                obj.parent().animate({backgroundColor: "#ff0000"}, 3000);
+                obj.parent().animate({backgroundColor: RED_WAIT}, 3000);
             }
             else{
                 if(key != 'bank'){
                     $('#' + key).parent().stop();
                     var prog = $("#" + key);
                     if(obj['cur'] === obj['max']){
-                        $('#' + key).parent().css('background-color', '#ffff00');;
+                        $('#' + key).parent().css('background-color', GRN_GETM);;
                         prog.siblings(".cus_text_bot").text("Empty");
                         prog.siblings(".cus_text_bot").css('fontSize', '17px');
                         prog.css('visibility', 'invisible');
                         js_bars[key].animate(obj['cur'] / obj['max']);
                     }
                     else{
-                        $('#' + key).parent().css('background-color', '#00ff00');;
+                        if(obj['cur'] > 0){
+                            $('#' + key).parent().css('background-color', YEL_PAYB);;
+                        }
+                        else{
+                            $('#' + key).parent().css('background-color', PUR_SPWN);;
+                        }
                         prog.siblings(".cus_text_bot").text(obj['cur'] + '/' + obj['max']);
                         js_bars[key].animate(obj['cur'] / obj['max']);
                         prog.siblings(".cus_text_bot").css('fontSize', '13px');
                         prog.css('visibility', 'visible');
                     }
-                    $('#' + key).parent().animate({backgroundColor: "#ffffff"}, 'slow');
-                }
-                else{
-                    if(obj['cur'] > 999){
-                        head_digs = Math.floor(obj['cur'] / 1000);
-                        if(obj['cur'] % 1000 === 0){
-                            $('#bank_text').text(head_digs + ",000/100,000");
-                        }
-                        else{
-                            $('#bank_text').text(head_digs + "," + ('0' + Math.floor(obj['cur'] % 1000)).slice(-3) + "/100,000");
-                        }
+                $('#' + key).parent().animate({backgroundColor: WHT_NOTN}, 'slow');
+            }
+            else{
+                if(obj['cur'] > 999){
+                    head_digs = Math.floor(obj['cur'] / 1000);
+                    if(obj['cur'] % 1000 === 0){
+                        $('#bank_text').text(head_digs + ",000/100,000");
                     }
                     else{
-                        $('#bank_text').text(obj['cur'] + "/100,000");
+                        $('#bank_text').text(head_digs + "," + ('0' + Math.floor(obj['cur'] % 1000)).slice(-3) + "/100,000");
                     }
-                    bank_bar.animate(obj['cur']/100000);
                 }
+                else{
+                    $('#bank_text').text(obj['cur'] + "/100,000");
+                }
+                bank_bar.animate(obj['cur']/100000);
             }
         }
     }
+}
 });
