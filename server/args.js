@@ -1,13 +1,13 @@
 var argName0 = "cus_lambda";
 var argName1 = "req_lambda";
 //var argName2 = "Lambda";
-var initVal0 = 17;
-var initVal1 = 12;
+var initVal0 = 50;
+var initVal1 = 9;
 //var initVal2 = 10;
 
 $( "#slider0" ).slider({
-    max: 30 ,
-    min: 10 ,
+    max: 80 ,
+    min: 1 ,
     value: initVal0 ,
     create: function( event, ui ){
         $("#sld_head0").html(argName0 + " : " + initVal0 / 100);
@@ -15,7 +15,7 @@ $( "#slider0" ).slider({
 });
 $( "#slider1" ).slider({
     max: 30 ,
-    min: 10 ,
+    min: 1 ,
     value: initVal1 ,
     create: function( event, ui ){
         $("#sld_head1").html(argName1 + " : " + initVal1 / 100);

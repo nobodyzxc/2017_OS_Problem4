@@ -57,7 +57,7 @@ void *Request::running(void *ptr){
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
         std::this_thread::sleep_for(
                 std::chrono::milliseconds(
-                    (int)(min(exp_dist(self->generator.req_lambda), (float)5) * 1000)));
+                    (int)(exp_dist(self->generator.req_lambda)) * 1000));
 #else
         usleep((rand() % 100000) * 3); //request per 0 - 3 secs
 #endif
@@ -69,9 +69,6 @@ void *Request::running(void *ptr){
         }
         else break;
     }
-
-    //self->display(self->idx , self->quota + 1 , self->quota);
-    // mv to repay
 
     delete self;
     return ptr;
@@ -109,6 +106,7 @@ void *RequestGenerator::running(void *ptr){
         if(self->curCust < self->maxCust){
             if(self->power) self->genReq(0);
             if(self->curCust >= self->maxCust) break;
+            pthread_mutex_unlock(&(self->baby_taker));
             std::this_thread::sleep_for(
                         std::chrono::milliseconds(
                             (int)(exp_dist(self->cus_lambda) * 1000)));
@@ -116,7 +114,6 @@ void *RequestGenerator::running(void *ptr){
             //sleep_possion();
         }
         else break;
-        pthread_mutex_unlock(&(self->baby_taker));
     }
     pthread_mutex_unlock(&(self->baby_taker));
     puts("generator shutdown");
@@ -137,19 +134,26 @@ void *RequestGenerator::running(void *ptr){
 int RequestGenerator::randIdx(){
     int idx;
     assert(curCust < maxCust);
-    assert((int)childs.size() < maxCust);
+    if((int)childs.size() >= maxCust){
+        cout << "may be bug" << endl;
+        for(auto it = childs.begin() ; 
+                it != childs.end() ; it++){
+            cout << "child idx : " << (*it) << endl;
+        }
+        exit(1);
+    }
     while(childs.find(idx = rand() % maxCust) != childs.end());
     curCust += 1;
-    childs.insert(idx);
+    childs.insert(idx); /* 0 - 19 */
     printf("child %2d join (%d)\n" , idx + 1 , curCust);
     return idx + 1;
 }
 
 void RequestGenerator::flyAway(int idx){
     pthread_mutex_lock(&baby_taker);
-    childs.erase(idx - 1);
-    //printf("child %2d left , avail = %lu\n" ,
-    //        idx , childs.size());
+    childs.erase(idx - 1); /* 0 - 19 */
+    printf("child %2d left , avail = %lu\n" ,
+            idx , childs.size());
     if(curCust == maxCust) active(maxCust);
     curCust -= 1;
     pthread_mutex_unlock(&baby_taker);

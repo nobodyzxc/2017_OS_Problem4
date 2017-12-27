@@ -113,7 +113,7 @@ void parse(char *cmd){
 }
 
 string parse_name(string inst){
-//{"name":"cus_lambda","val":0.14}
+//  {"name":"cus_lambda","val":0.14}
     return inst.substr(9 , 10);
 }
 
@@ -142,9 +142,11 @@ int main(void){
         string name = parse_name(inst);
         if(name == "req_lambda"){
             reqGen.req_lambda = parse_val(inst);
+            cout << reqGen.req_lambda << endl;
         }
         else if(name == "cus_lambda"){
             reqGen.cus_lambda = parse_val(inst);
+            cout << reqGen.cus_lambda << endl;
         }
         name = "";
     }
