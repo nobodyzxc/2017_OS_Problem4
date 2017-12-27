@@ -92,7 +92,9 @@ ser_io.sockets.on('connection', function(socket){
     // 接收來自於瀏覽器的資料
     socket.on('client_data', function(data) {
         console.log(data);
-        cppServerSock.write(JSON.stringify(data));
+        if(cppServerSock != undefined){
+            cppServerSock.write(JSON.stringify(data));
+        }
         //cppServerSock.pipe(cppServerSock);
         //process.stdout.write(data.letter);
     });
