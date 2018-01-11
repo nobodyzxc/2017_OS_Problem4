@@ -15,11 +15,11 @@ Here a means has to be found for the banker to determine whether the next paymen
 ### poisson 公式說明
 Poisson process 是基於 Exponential distribution 形成， Exponential distribution 是用以表示獨立隨機事件發生的時間間隔。由於機率密度函數（PDF）是描述隨機變量的輸出值。隨機變量是取值落在某個區域之內的機率則為機率密度函數在這個區域上的積分，亦即累積分布函數（CDF）， CDF 為
 
-![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/cdf.gif)
+> ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/cdf.gif)
 
 代表經過時間 t 會有機率 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/possibility.gif) 發生此事件，因此我們將其轉成
 
-![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/time.gif)
+> ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/time.gif)
 
 以方便求得時間 t ，而 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/possibility.gif) 以亂數生成。
 
@@ -191,3 +191,9 @@ class Request{
 ### Demo Video
 
 [![](https://i.ytimg.com/vi/4Plb8SZRdjg/hqdefault.jpg?sqp=-oaymwEXCPYBEIoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCMolSg3f1ZLffvzs0UeFff2hyFgg)](https://www.youtube.com/embed/4Plb8SZRdjg)
+
+
+---
+### Project URL
+
+[https://github.com/nobodyzxc/OpSysProj](https://github.com/nobodyzxc/OpSysProj)
