@@ -20,12 +20,14 @@ var server = http.createServer(
         var path = url.parse(request.url).pathname;
 
         switch (path) {
-            case '/':
+            case '/hello.html':
             response.writeHead(200, {'Content-Type': 'text/html'});
             response.write('Hello, World.');
             response.end();
             break;
+            case '/':
             case '/index.html':
+            path = '/index.html';
             fs.readFile(__dirname + path, function(error, data) {
                 if (error){
                     response.writeHead(404);

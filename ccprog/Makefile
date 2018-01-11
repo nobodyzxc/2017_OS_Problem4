@@ -5,7 +5,7 @@ _MAIN    = ${MAIN:%=%.cc}
 SRCS     = request gui bank exponential
 _SRCS    = ${SRCS:%=%.cc}
 _OBJS    = ${SRCS:%=%.o}
-TRGT     = a.exe
+TRGT     = main
 LNKFLGS  = -pthread
 
 all:
