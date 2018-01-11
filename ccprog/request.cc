@@ -4,12 +4,14 @@
 #include <sys/timeb.h>
 #include <unistd.h>
 #include <assert.h>
+#include <iostream>
 
 #include "bank.h"
 #include "request.h"
 #include "exponential.h"
 #include "tui.h"
 
+using namespace std;
 //#define SPAWN
 
 Request::Request(
