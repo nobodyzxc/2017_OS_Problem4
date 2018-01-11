@@ -47,10 +47,10 @@ website updates the information dynamically
 ```
 
 ---
-### classes 介紹
+### class 介紹
 
 為了模擬銀行和客戶之間的互動，所以選擇使用 OOP 來實作。
-主要使用了三個 classes 進行互動。
+主要使用了三種 class 進行互動。
 
 1. Bank (in bank.h)
 銀行提供負責處理來自客戶端的請求。
@@ -156,7 +156,7 @@ class Request{
         void (*display)(int , int , int);
 
         /* function to show client's status */
-        Request(Bank &bnk ,
+        Request(Bank &_bank ,
                 RequestGenerator &gen ,
                 int quo , int id);
 
