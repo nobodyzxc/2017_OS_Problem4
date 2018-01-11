@@ -13,14 +13,15 @@ Here a means has to be found for the banker to determine whether the next paymen
 
 ---
 ### poisson 公式說明
-Poisson process 是基於 Exponential distribution 形成， Exponential distribution 是用以表示獨立隨機事件發生的時間間隔。由於機率密度函數（PDF）是描述隨機變量的輸出值。隨機變量是取值落在某個區域之內的機率則為機率密度函數在這個區域上的積分，亦即累積分布函數（CDF）， CDF 為 
+Poisson process 是基於 Exponential distribution 形成， Exponential distribution 是用以表示獨立隨機事件發生的時間間隔。由於機率密度函數（PDF）是描述隨機變量的輸出值。隨機變量是取值落在某個區域之內的機率則為機率密度函數在這個區域上的積分，亦即累積分布函數（CDF）， CDF 為
 
-$$P(X,\lambda) = 1 - e^{-\lambda t}$$
- 
-代表經過時間 t 會有機率 $P(X,\lambda)$ 發生此事件，因此我們將其轉成
+![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/cdf.gif)
 
-$$t = -ln(1-P(X,\lambda))/\lambda$$
-以方便求得時間 t ，而 $P(X,\lambda)$ 以亂數生成。
+代表經過時間 t 會有機率 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/possibility.gif) 發生此事件，因此我們將其轉成
+
+![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/time.gif)
+
+以方便求得時間 t ，而 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/possibility.gif) 以亂數生成。
 
 ---
 ### 架構圖
@@ -28,21 +29,21 @@ $$t = -ln(1-P(X,\lambda))/\lambda$$
 ```
 C program to simulate the behaviors between bank and clients
 
-                                
+
   |                          Λ
   | obj info via socket      | slider evnet to adjust lambda
   v                          |
-                          
-node.js server accepts the information, 
+
+node.js server accepts the information,
 changes its table and sends the update information to web
 
   |                          Λ
   | obj info via websocket   | slider evnet to adjust lambda
-  v                          |                        
-  
+  v                          |
+
 website updates the information dynamically
-                          
-                          
+
+
 ```
 
 ---
@@ -120,7 +121,7 @@ class RequestGenerator{
         /* generate the clients */
         void flyAway(int idx);
         /* remove child from set */
-        
+
         float cus_lambda;
         /* the lambda of poisson process for generating client */
         float req_lambda;
@@ -151,9 +152,9 @@ class Request{
         /* quota : max krona that client can borrow
          * krona : current krona
          * idx   : client's id */
-        
+
         void (*display)(int , int , int);
-        
+
         /* function to show client's status */
         Request(Bank &bnk ,
                 RequestGenerator &gen ,
@@ -163,7 +164,7 @@ class Request{
         /* start client's thread */
         void addKrona(int amount);
         /* add client's krona (request succeeded) */
-        
+
     private:
         Bank &bank;
         pthread_t threadID;
@@ -179,7 +180,7 @@ class Request{
 ```
 
 ---
-### 網頁圖例介紹 (包括顏色變化)
+### 網頁圖例介紹 （包括顏色變化）
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo0.png)
 
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo1.png)
@@ -189,4 +190,4 @@ class Request{
 ---
 ### Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/4Plb8SZRdjg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+[![](https://i.ytimg.com/vi/4Plb8SZRdjg/hqdefault.jpg?sqp=-oaymwEXCPYBEIoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCMolSg3f1ZLffvzs0UeFff2hyFgg)](https://www.youtube.com/embed/4Plb8SZRdjg)
