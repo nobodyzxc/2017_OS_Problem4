@@ -181,10 +181,12 @@ class Request{
 
 ---
 ### 網頁圖例介紹 （包括顏色變化）
+1. purple : new client generated
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo0.png)
-
+2. green  : client paid back all money
+3. yellow : client got money from bank
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo1.png)
-
+4. red    : client was waiting bank's response
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo2.png)
 
 ---
