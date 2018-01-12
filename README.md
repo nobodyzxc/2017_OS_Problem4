@@ -180,13 +180,19 @@ class Request{
 ```
 
 ---
-### 網頁圖例介紹 （包括顏色變化）
-1. purple : new client generated
+### 網頁圖例介紹
+1. 顯示 Empty 的格子代表尚未有 Customer 的位置
+2. 若有 Customer 加入後，下方的數字即為`已借金額 / 預借金額`
+3. 中間的 Progress Bar 表示`已借到的金額比例`
+4. 右方的 Bank，下方數字為`剩餘金額 / 總金額`，並會依所剩金額比例提示銀行的財務狀況 (5 stages: `Safe`, `Considerable`, `Medium`, `Danger`, `Depression`)
+
+### 顏色變化提示
+1. Purple : new client generated
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo0.png)
-2. green  : client paid back all money
-3. yellow : client got money from bank
+2. Green  : client paid back all money
+3. Yellow : client got money from bank
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo1.png)
-4. red    : client was waiting bank's response
+4. Red    : client was waiting bank's response
 ![](https://raw.githubusercontent.com/nobodyzxc/OpSysProj/master/images/demo2.png)
 
 ---
